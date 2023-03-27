@@ -6,6 +6,7 @@ import 'dart:io';
 import 'details_screen.dart';
 import 'search_results.dart';
 import 'search_screen.dart';
+import 'agreat_drawer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,34 +45,7 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text('AGReaTWine'),
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              child: Text('AGReaTWine'),
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-            ),
-            ListTile(
-              title: Text('Home'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: Text('Search'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SearchScreen()),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
+      drawer: const AGreatDrawer(),
       body: Center(
         child: FlutterLogo(
           size: 200,

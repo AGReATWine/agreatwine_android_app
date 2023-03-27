@@ -5,6 +5,7 @@ import 'package:sqflite/sqflite.dart';
 import 'dart:io';
 import 'search_results.dart';
 import 'main.dart';
+import 'agreat_drawer.dart';
 
 class SearchScreen extends StatefulWidget {
   @override
@@ -25,34 +26,7 @@ class _SearchScreenState extends State<SearchScreen> {
       appBar: AppBar(
         title: Text('AGReaTWine'),
       ),
-  drawer: Drawer(
-    child: ListView(
-      padding: EdgeInsets.zero,
-      children: [
-        DrawerHeader(
-          child: Text('AGReaTWine'),
-          decoration: BoxDecoration(
-            color: Colors.blue,
-          ),
-        ),
-        ListTile(
-          title: Text('Home'),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HomePage()),
-            );
-          },
-        ),
-        ListTile(
-          title: Text('Search'),
-          onTap: () {
-            Navigator.pop(context);
-          },
-        ),
-      ],
-    ),
-  ),
+      drawer: const AGreatDrawer(),
       body: Column(
         children: [
           TextField(
