@@ -61,6 +61,7 @@ class WineDetailsScreen extends StatelessWidget {
                   children: [
                     for (var i = 0; i < vintages.length; i++)
                       Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -73,13 +74,26 @@ class WineDetailsScreen extends StatelessWidget {
                               Text(scoreAvg[i]),
                             ],
                           ),
-                          ExpansionTile(
-                            title: Text('Tasting Note'),
+                          SizedBox(height: 8),
+                          Column(
                             children: [
-                              Text(tasting[i], softWrap: true),
+                              ElevatedButton(
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return Container(
+                                        padding: EdgeInsets.all(16),
+                                        child: Text(tasting[i], softWrap: true,style: TextStyle(fontSize: 20)),
+                                      );
+                                    },
+                                  );
+                                },
+                                child: Text('Show Tasting Notes'),
+                              ),
+                              SizedBox(height: 8),
                             ],
                           ),
-                          SizedBox(height: 8),
                         ],
                       ),
                   ],

@@ -48,22 +48,30 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: TextField(
-          controller: _searchController,
-          decoration: InputDecoration(
-            hintText: 'Search...',
-            border: InputBorder.none,
-          ),
-        ),
+        title: Text('App'),
       ),
-      body: _buildSearchResults(),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.search),
-        onPressed: () async {
-          String query = _searchController.text;
-          _searchResults = await _search(query);
-          setState(() {});
-        },
+      body: Column(
+        children: [
+          TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: 'Search...',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          SizedBox(height: 16),
+          ElevatedButton(
+            child: Text('Search'),
+            onPressed: () async {
+              String query = _searchController.text;
+              _searchResults = await _search(query);
+              setState(() {});
+            },
+          ),
+          Expanded(
+            child: _buildSearchResults(),
+          ),
+        ],
       ),
     );
   }
@@ -73,14 +81,16 @@ class _HomePageState extends State<HomePage> {
     final path = join(dbPath, 'allwines2.db');
     final database = await openDatabase(path);
 
-    final results = await database.rawQuery('SELECT * FROM allwines WHERE FullName LIKE ? OR WineryName LIKE ?', ['%$query%', '%$query%']);
-
+    final results = await database.rawQuery(
+        'SELECT * FROM allwines WHERE FullName LIKE ? OR WineryName LIKE ?',
+        ['%$query%', '%$query%']);
 
     return results;
   }
 
   Widget _buildSearchResults() {
-    final filteredResults = _searchResults.where((result) => result['Entry'] == "1").toList();
+    final filteredResults =
+        _searchResults.where((result) => result['Entry'] == "1").toList();
     return ListView.builder(
       itemCount: filteredResults.length,
       itemBuilder: (BuildContext context, int index) {
