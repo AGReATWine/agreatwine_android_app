@@ -11,12 +11,18 @@ class SearchResults extends StatefulWidget {
 }
 
 class _SearchResultsState extends State<SearchResults> {
-
   @override
   Widget build(BuildContext context) {
     final filteredResults = widget.searchResults
         .where((result) => result['Entry'] == "1")
         .toList();
+
+    if (filteredResults.isEmpty) {
+      return Center(
+        child: Text('No results'),
+      );
+    }
+
     return ListView.builder(
       itemCount: filteredResults.length,
       itemBuilder: (BuildContext context, int index) {

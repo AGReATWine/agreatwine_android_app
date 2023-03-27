@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'main.dart';
 import 'search_screen.dart';
+import 'test_appellation.dart';
 
 class AGreatDrawer extends StatelessWidget {
   const AGreatDrawer({Key? key}) : super(key: key);
@@ -32,6 +33,15 @@ class AGreatDrawer extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => SearchScreen()),
+              );
+          },
+        ),
+        ListTile(
+          title: Text('Test'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => TestScreen()),
               );
           },
         ),
