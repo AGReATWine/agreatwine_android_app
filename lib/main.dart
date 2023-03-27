@@ -4,6 +4,7 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:io';
 import 'details_screen.dart';
+import 'search_results.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,6 +44,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   TextEditingController _searchController = TextEditingController();
   List<Map<String, dynamic>> _searchResults = [];
+  bool _sortByRS = false;
+  bool _sortByQP = false;
+  bool _showSortButtons = false;
+  bool _sortAscending = false; // default sort order is ascending
 
   @override
   Widget build(BuildContext context) {
@@ -60,16 +65,62 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           SizedBox(height: 16),
-          ElevatedButton(
-            child: Text('Search'),
-            onPressed: () async {
-              String query = _searchController.text;
-              _searchResults = await _search(query);
-              setState(() {});
-            },
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(width: 16),
+              ElevatedButton(
+                child: Text('Search'),
+                onPressed: () async {
+                  String query = _searchController.text;
+                  _searchResults = await _search(query);
+                  setState(() {
+                    _showSortButtons = true;
+                  });
+                },
+              ),
+              if (_showSortButtons) 
+                Padding(
+                  padding: EdgeInsets.only(left: 16.0),
+                  child: ElevatedButton(
+                    child: Text('Sort by RS'),
+                    onPressed: () async {
+                      setState(() {
+                        _sortByRS = !_sortByRS;
+                        _sortByQP = false;
+                        _sortAscending = !_sortAscending; // toggle sort order
+                        _searchResults = List.from(_searchResults)..sort((a, b) {
+                          int rsComparison = (_sortAscending ? b['RS'] ?? 0 : a['RS'] ?? 0).compareTo(_sortAscending ? a['RS'] ?? 0 : b['RS'] ?? 0);
+                          if (rsComparison != 0) {
+                            return rsComparison;
+                          } else {
+                            return (a['RANK'] ?? 0).compareTo(b['RANK'] ?? 0);
+                          }
+                        });
+                      });
+                    },
+                  ),
+                ),
+              if (_showSortButtons) // conditionally render sort buttons
+                Padding(
+                  padding: EdgeInsets.only(left: 16.0),
+                  child: ElevatedButton(
+                    child: Text('Sort by QP'),
+                    onPressed: () {
+                      setState(() {
+                        _sortByQP = !_sortByQP;
+                        _sortByRS = false;
+                        _searchResults = List.from(_searchResults)..sort((a, b) => _sortByQP
+                            ? (b['QP'] ?? 0).compareTo(a['QP'] ?? 0)
+                            : (a['QP'] ?? 0).compareTo(b['QP'] ?? 0));
+                      });
+                    },
+                  ),
+                )
+            ],
           ),
           Expanded(
-            child: _buildSearchResults(),
+            child: SearchResults(searchResults: _searchResults),
           ),
         ],
       ),
@@ -86,65 +137,5 @@ class _HomePageState extends State<HomePage> {
         ['%$query%', '%$query%']);
 
     return results;
-  }
-
-  Widget _buildSearchResults() {
-    final filteredResults =
-        _searchResults.where((result) => result['Entry'] == "1").toList();
-    return ListView.builder(
-      itemCount: filteredResults.length,
-      itemBuilder: (BuildContext context, int index) {
-        final result = filteredResults[index];
-        return ListTile(
-          title: Text(result['FullName']),
-          subtitle: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(result['WineryName']),
-                  Text(' | '),
-                  Text(result['AppellationLevel']),
-                  Text(' '),
-                  Text(result['AppellationName']),
-                  Text(' | '),
-                  Text(result['Region']),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(result['RS'].toString()),
-                  Text(' | Rank '),
-                  Text(result['RANK']),
-                  Text(' | '),
-                  Text(result['Price']),
-                  Text('€'),
-                ],
-              ),
-            ],
-          ),
-          onTap: () {
-            final wineDetails = {
-              'fullName': result['FullName'],
-              'wineryName': result['WineryName'],
-              'appellationLevel': result['AppellationLevel'],
-              'appellationName': result['AppellationName'],
-              'region': result['Region'],
-              'rsScore': result['RS'],
-              'qpScore': result['QP'],
-              'rank': result['RANK'],
-              'price': result['Price'],
-            };
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => WineDetailsScreen(wineDetails),
-              ),
-            );
-          },
-        );
-      },
-    );
   }
 }
