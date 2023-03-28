@@ -3,6 +3,9 @@ import 'search_results.dart';
 import 'details_screen.dart';
 
 class SingleWineTile extends StatelessWidget {
+  double fontSizeName = 19.0;
+  double fontSizeDesc = 17.0;
+  double fontSizeSymbol = 17.0;
   final Map<String, dynamic> result;
 
   SingleWineTile({required this.result});
@@ -12,40 +15,34 @@ class SingleWineTile extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(top: 10),
         child: ListTile(
-        title: Text(result['FullName']),
+        title: Text(result['FullName'],style: TextStyle(fontSize: fontSizeName,)),
         subtitle: Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(result['WineryName']),
-                Text(' | '),
-                Text(result['AppellationLevel']),
-                Text(' '),
-                Text(result['AppellationName']),
-                Text(' | '),
-                Text(result['Region']),
+                Text('${result['WineryName']} | ${result['AppellationLevel']} ${result['AppellationName']} | ${result['Region']}',style: TextStyle(fontSize: fontSizeDesc)),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text('RS '),
+                Text('RS ',style: TextStyle(fontSize: fontSizeSymbol)),
                 Stack(
                   children: [
                     Container(
                       width: 100,
-                      height: 16,
+                      height: 20,
                       decoration: BoxDecoration(
                         color: Colors.grey.shade300,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.5),
-                            spreadRadius: 1,
-                            blurRadius: 3,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
+                        // boxShadow: [
+                        //   BoxShadow(
+                        //     color: Colors.black.withOpacity(0.5),
+                        //     spreadRadius: 1,
+                        //     blurRadius: 3,
+                        //     offset: Offset(0, 2),
+                        //   ),
+                        // ],
                       ),
                     ),
                     Positioned(
@@ -53,7 +50,7 @@ class SingleWineTile extends StatelessWidget {
                       left: 0,
                       child: Container(
                         width: result['RS'],
-                        height: 16,
+                        height: 20,
                         decoration: BoxDecoration(
                           color: Colors.blue,
                         ),
@@ -66,23 +63,23 @@ class SingleWineTile extends StatelessWidget {
                     ),
                   ],
                 ),
+                SizedBox(width: 6),
                 Icon(Icons.leaderboard),
-                Text(result['RANK']),
-                Text(' | '),
-                Text(result['EvaluationAvg'].toString()),
-                Text(''),
+                Text(result['RANK'],style: TextStyle(fontSize: fontSizeSymbol)),
+                Icon(Icons.star),
+                Text(result['EvaluationAvg'],style: TextStyle(fontSize: fontSizeSymbol))
               ],
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 6),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text('QP '),
+                Text('QP ',style: TextStyle(fontSize: fontSizeSymbol,)),
                 Stack(
                   children: [
                     Container(
                       width: 100,
-                      height: 16,
+                      height: 20,
                       decoration: BoxDecoration(
                         color: Colors.grey.shade300,
                       ),
@@ -92,16 +89,22 @@ class SingleWineTile extends StatelessWidget {
                       left: 0,
                       child: Container(
                         width: result['QP'],
-                        height: 16,
+                        height: 20,
                         decoration: BoxDecoration(
                           color: Colors.green,
                         ),
                       ),
                     ),
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: Text(result['QP'].toInt().toString()),
+                    ),
                   ],
                 ),
-                Text(' | '),
-                Text(result['Price']),
+                SizedBox(width: 6),
+                Icon(Icons.euro),
+                Text('${result['Price']}',style: TextStyle(fontSize: fontSizeSymbol,)),
               ],
             ),
           ],

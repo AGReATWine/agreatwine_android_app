@@ -90,6 +90,7 @@ class EntriesScreen extends StatefulWidget {
 
 class _EntriesScreenState extends State<EntriesScreen> {
   List<Map<String, dynamic>> entries = [];
+  TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -101,18 +102,27 @@ class _EntriesScreenState extends State<EntriesScreen> {
     });
   }
 
-  Future<List<Map<String, dynamic>>> searchEntries() async {
-    var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, 'allwines2.db');
-  
-    Database database = await openDatabase(path);
-    List<Map<String, dynamic>> results = await database.rawQuery(
-      "SELECT * FROM allwines WHERE AppellationName = ? AND Entry = 1",
-      [widget.appellationName],
-    );
-    await database.close();
-    return results;
+  void _resetFilter() {
+    _searchController.clear(); // clear the search text field
+    searchEntries().then((results) {
+      setState(() {
+        entries = results;
+      });
+    });
   }
+
+Future<List<Map<String, dynamic>>> searchEntries() async {
+  var databasesPath = await getDatabasesPath();
+  String path = join(databasesPath, 'allwines2.db');
+
+  Database database = await openDatabase(path);
+  List<Map<String, dynamic>> results = await database.rawQuery(
+    "SELECT * FROM allwines WHERE AppellationName = ? AND Entry = 1 AND FullName LIKE ?",
+    [widget.appellationName, '%${_searchController.text}%'], // filter by the search text field
+  );
+  await database.close();
+  return results;
+}
 
   bool _sortByRS = false;
   bool _sortByQP = false;
@@ -120,37 +130,60 @@ class _EntriesScreenState extends State<EntriesScreen> {
   bool _sortAscending = false; // default sort order is ascending
 
   Widget _buildSortButtons() {
-    return SortButtons(
-      sortByRS: _sortByRS,
-      sortByQP: _sortByQP,
-      sortAscending: _sortAscending,
-      onPressedRS: (sortByRS, sortByQP, sortAscending) {
-        setState(() {
-          _sortByRS = sortByRS;
-          _sortByQP = sortByQP;
-          _sortAscending = sortAscending;
-          entries = List.from(entries)..sort((a, b) {
-            int rsComparison =
-                (_sortAscending ? b['RS'] ?? 0 : a['RS'] ?? 0).compareTo(
-                    _sortAscending ? a['RS'] ?? 0 : b['RS'] ?? 0);
-            if (rsComparison != 0) {
-              return rsComparison;
-            } else {
-              return (a['RANK'] ?? 0).compareTo(b['RANK'] ?? 0);
-            }
-          });
-        });
-      },
-      onPressedQP: (sortByRS, sortByQP, sortAscending) {
-        setState(() {
-          _sortByRS = sortByRS;
-          _sortByQP = sortByQP;
-          _sortAscending = sortAscending;
-          entries = List.from(entries)..sort((a, b) => sortByQP
-              ? (b['QP'] ?? 0).compareTo(a['QP'] ?? 0)
-              : (a['QP'] ?? 0).compareTo(b['QP'] ?? 0));
-        });
-      },
+    return Column(
+      children: [
+        TextField(
+          controller: _searchController,
+          decoration: InputDecoration(
+            hintText: 'Search',
+            suffixIcon: IconButton(
+              icon: Icon(Icons.clear),
+              onPressed: _resetFilter,
+            ),
+          ),
+          onChanged: (value) {
+            setState(() {
+              entries = entries.where((entry) =>
+                  entry['FullName']
+                      .toLowerCase()
+                      .contains(value.toLowerCase()))
+                  .toList();
+            });
+          },
+        ),
+        SortButtons(
+          sortByRS: _sortByRS,
+          sortByQP: _sortByQP,
+          sortAscending: _sortAscending,
+          onPressedRS: (sortByRS, sortByQP, sortAscending) {
+            setState(() {
+              _sortByRS = sortByRS;
+              _sortByQP = sortByQP;
+              _sortAscending = sortAscending;
+              entries = List.from(entries)..sort((a, b) {
+                int rsComparison =
+                    (_sortAscending ? b['RS'] ?? 0 : a['RS'] ?? 0).compareTo(
+                        _sortAscending ? a['RS'] ?? 0 : b['RS'] ?? 0);
+                if (rsComparison != 0) {
+                  return rsComparison;
+                } else {
+                  return (a['RANK'] ?? 0).compareTo(b['RANK'] ?? 0);
+                }
+              });
+            });
+          },
+          onPressedQP: (sortByRS, sortByQP, sortAscending) {
+            setState(() {
+              _sortByRS = sortByRS;
+              _sortByQP = sortByQP;
+              _sortAscending = sortAscending;
+              entries = List.from(entries)..sort((a, b) => sortByQP
+                  ? (b['QP'] ?? 0).compareTo(a['QP'] ?? 0)
+                  : (a['QP'] ?? 0).compareTo(b['QP'] ?? 0));
+            });
+          },
+        )
+      ]
     );
   }
 
