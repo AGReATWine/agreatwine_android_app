@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'details_screen.dart';
+import 'single_wine_tile.dart';
 
 class WineListTile extends StatelessWidget {
   final Map<String, dynamic> wineData;
@@ -96,7 +97,7 @@ class _SearchResultsState extends State<SearchResults> {
       itemCount: filteredResults.length,
       itemBuilder: (BuildContext context, int index) {
         final result = filteredResults[index];
-        return WineListTile(wineData: result);
+        return SingleWineTile(result: result);
       },
     );
   }

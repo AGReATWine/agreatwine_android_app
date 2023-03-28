@@ -7,6 +7,7 @@ import 'search_results.dart';
 import 'main.dart';
 import 'navigation.dart';
 import 'search_sort_buttons.dart';
+import 'single_wine_tile.dart';
 
 Future<List<Map<String, dynamic>>> searchWines() async {
   var databasesPath = await getDatabasesPath();
@@ -167,7 +168,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
               itemCount: entries.length,
               itemBuilder: (context, index) {
                 final entry = entries[index];
-                return WineListTile(wineData: entry);
+                return SingleWineTile(result: entry);
               },
             ),
           ),
