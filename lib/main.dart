@@ -8,6 +8,7 @@ import 'search_results.dart';
 import 'search_screen.dart';
 import 'agreat_drawer.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await _copyDatabase();

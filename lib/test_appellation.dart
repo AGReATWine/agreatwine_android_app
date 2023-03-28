@@ -28,7 +28,7 @@ class TestScreen extends StatefulWidget {
 class _TestScreenState extends State<TestScreen> {
   List<Map<String, dynamic>> wines = [];
 
-  @override
+    @override
   void initState() {
     super.initState();
     searchWines().then((results) {
@@ -37,6 +37,7 @@ class _TestScreenState extends State<TestScreen> {
       });
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -49,15 +50,79 @@ class _TestScreenState extends State<TestScreen> {
         itemCount: wines.length,
         itemBuilder: (context, index) {
           final wine = wines[index];
-          return ListTile(
-  title: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      Text(wine['AppellationName']),
-      Text('${wine['count']}'),
-    ],
-  ),
-);
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EntriesScreen(
+                    appellationName: wine['AppellationName'],
+                  ),
+                ),
+              );
+            },
+            child: ListTile(
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(wine['AppellationName']),
+                  Text('${wine['count']}'),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class EntriesScreen extends StatefulWidget {
+  final String appellationName;
+
+  EntriesScreen({required this.appellationName});
+
+  @override
+  _EntriesScreenState createState() => _EntriesScreenState();
+}
+
+class _EntriesScreenState extends State<EntriesScreen> {
+  List<Map<String, dynamic>> entries = [];
+
+  @override
+  void initState() {
+    super.initState();
+    searchEntries().then((results) {
+      setState(() {
+        entries = results;
+      });
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> searchEntries() async {
+    var databasesPath = await getDatabasesPath();
+    String path = join(databasesPath, 'allwines2.db');
+  
+    Database database = await openDatabase(path);
+    List<Map<String, dynamic>> results = await database.rawQuery(
+      "SELECT * FROM allwines WHERE AppellationName = ? AND Entry = 1",
+      [widget.appellationName],
+    );
+    await database.close();
+    return results;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("${widget.appellationName} Appellation Wine List"),
+      ),
+      body: ListView.builder(
+        itemCount: entries.length,
+        itemBuilder: (context, index) {
+          final entry = entries[index];
+          return WineListTile(wineData: entry);
         },
       ),
     );

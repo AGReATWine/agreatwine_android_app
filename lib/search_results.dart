@@ -1,6 +1,75 @@
 import 'package:flutter/material.dart';
 import 'details_screen.dart';
 
+class WineListTile extends StatelessWidget {
+  final Map<String, dynamic> wineData;
+
+  WineListTile({required this.wineData});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(wineData['FullName']),
+      subtitle: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(wineData['WineryName']),
+              Text(' | '),
+              Text(wineData['AppellationLevel']),
+              Text(' '),
+              Text(wineData['AppellationName']),
+              Text(' | '),
+              Text(wineData['Region']),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text('RS '),
+              Text(wineData['RS'].toInt().toString()),
+              Text(' | Rank '),
+              Text(wineData['RANK']),
+              Text(' | '),
+              Text(wineData['EvaluationAvg'].toString()),
+              Text(''),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text('QP '),
+              Text(wineData['QP'].toInt().toString()),
+              Text(' | '),
+              Text(wineData['Price']),
+            ],
+          ),
+        ],
+      ),
+      onTap: () {
+        final wineDetails = {
+          'fullName': wineData['FullName'],
+          'wineryName': wineData['WineryName'],
+          'appellationLevel': wineData['AppellationLevel'],
+          'appellationName': wineData['AppellationName'],
+          'region': wineData['Region'],
+          'rsScore': wineData['RS'],
+          'qpScore': wineData['QP'],
+          'rank': wineData['RANK'],
+          'price': wineData['Price'],
+        };
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => WineDetailsScreen(wineDetails),
+          ),
+        );
+      },
+    );
+  }
+}
+
 class SearchResults extends StatefulWidget {
   final List<Map<String, dynamic>> searchResults;
 
@@ -27,65 +96,7 @@ class _SearchResultsState extends State<SearchResults> {
       itemCount: filteredResults.length,
       itemBuilder: (BuildContext context, int index) {
         final result = filteredResults[index];
-        return ListTile(
-          title: Text(result['FullName']),
-          subtitle: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(result['WineryName']),
-                  Text(' | '),
-                  Text(result['AppellationLevel']),
-                  Text(' '),
-                  Text(result['AppellationName']),
-                  Text(' | '),
-                  Text(result['Region']),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text('RS '),
-                  Text(result['RS'].toInt().toString()),
-                  Text(' | Rank '),
-                  Text(result['RANK']),
-                  Text(' | '),
-                  Text(result['EvaluationAvg'].toString()),
-                  Text(''),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text('QP '),
-                  Text(result['QP'].toInt().toString()),
-                  Text(' | '),
-                  Text(result['Price']),
-                ],
-              ),
-            ],
-          ),
-          onTap: () {
-            final wineDetails = {
-              'fullName': result['FullName'],
-              'wineryName': result['WineryName'],
-              'appellationLevel': result['AppellationLevel'],
-              'appellationName': result['AppellationName'],
-              'region': result['Region'],
-              'rsScore': result['RS'],
-              'qpScore': result['QP'],
-              'rank': result['RANK'],
-              'price': result['Price'],
-            };
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => WineDetailsScreen(wineDetails),
-              ),
-            );
-          },
-        );
+        return WineListTile(wineData: result);
       },
     );
   }
