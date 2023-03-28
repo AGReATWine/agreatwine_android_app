@@ -6,7 +6,7 @@ import 'dart:io';
 import 'details_screen.dart';
 import 'search_results.dart';
 import 'search_screen.dart';
-import 'agreat_drawer.dart';
+import 'navigation.dart';
 
 
 void main() async {
@@ -34,12 +34,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'SQLite Search Demo',
-      home: HomePage(),
+      home: HomeScreen(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomeScreen extends StatelessWidget {
+  int _currentIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,6 +53,7 @@ class HomePage extends StatelessWidget {
           size: 200,
         ),
       ),
+      bottomNavigationBar: AGreatBottomNavigationBarH(currentIndex: _currentIndex),
     );
   }
 }

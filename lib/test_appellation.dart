@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 import 'dart:io';
 import 'search_results.dart';
 import 'main.dart';
-import 'agreat_drawer.dart';
+import 'navigation.dart';
 import 'search_sort_buttons.dart';
 
 Future<List<Map<String, dynamic>>> searchWines() async {
@@ -73,6 +73,7 @@ class _TestScreenState extends State<TestScreen> {
           );
         },
       ),
+      bottomNavigationBar: AGreatBottomNavigationBar(),
     );
   }
 }

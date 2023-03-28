@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 import 'dart:io';
 import 'search_results.dart';
 import 'main.dart';
-import 'agreat_drawer.dart';
+import 'navigation.dart';
 import 'search_sort_buttons.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -20,6 +20,7 @@ class _SearchScreenState extends State<SearchScreen> {
   bool _sortByQP = false;
   bool _showSortButtons = false;
   bool _sortAscending = false; // default sort order is ascending
+  int _currentIndex = 1;
 
   Widget _buildSortButtons() {
     return SortButtons(
@@ -95,6 +96,7 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         ],
       ),
+      bottomNavigationBar: AGreatBottomNavigationBarH(currentIndex: _currentIndex),
     );
   }
 
