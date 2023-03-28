@@ -173,6 +173,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
           ),
         ],
       ),
+      bottomNavigationBar: AGreatBottomNavigationBar(),
     );
   }
 }
