@@ -6,7 +6,7 @@ import 'dart:io';
 import 'search_results.dart';
 import 'main.dart';
 import 'agreat_drawer.dart';
-
+import 'search_sort_buttons.dart';
 
 Future<List<Map<String, dynamic>>> searchWines() async {
   var databasesPath = await getDatabasesPath();
@@ -112,18 +112,65 @@ class _EntriesScreenState extends State<EntriesScreen> {
     return results;
   }
 
+  bool _sortByRS = false;
+  bool _sortByQP = false;
+  bool _showSortButtons = false;
+  bool _sortAscending = false; // default sort order is ascending
+
+  Widget _buildSortButtons() {
+    return SortButtons(
+      sortByRS: _sortByRS,
+      sortByQP: _sortByQP,
+      sortAscending: _sortAscending,
+      onPressedRS: (sortByRS, sortByQP, sortAscending) {
+        setState(() {
+          _sortByRS = sortByRS;
+          _sortByQP = sortByQP;
+          _sortAscending = sortAscending;
+          entries = List.from(entries)..sort((a, b) {
+            int rsComparison =
+                (_sortAscending ? b['RS'] ?? 0 : a['RS'] ?? 0).compareTo(
+                    _sortAscending ? a['RS'] ?? 0 : b['RS'] ?? 0);
+            if (rsComparison != 0) {
+              return rsComparison;
+            } else {
+              return (a['RANK'] ?? 0).compareTo(b['RANK'] ?? 0);
+            }
+          });
+        });
+      },
+      onPressedQP: (sortByRS, sortByQP, sortAscending) {
+        setState(() {
+          _sortByRS = sortByRS;
+          _sortByQP = sortByQP;
+          _sortAscending = sortAscending;
+          entries = List.from(entries)..sort((a, b) => sortByQP
+              ? (b['QP'] ?? 0).compareTo(a['QP'] ?? 0)
+              : (a['QP'] ?? 0).compareTo(b['QP'] ?? 0));
+        });
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("${widget.appellationName} Appellation Wine List"),
       ),
-      body: ListView.builder(
-        itemCount: entries.length,
-        itemBuilder: (context, index) {
-          final entry = entries[index];
-          return WineListTile(wineData: entry);
-        },
+      body: Column(
+        children: [
+          _buildSortButtons(), // add the sort buttons widget
+          Expanded(
+            child: ListView.builder(
+              itemCount: entries.length,
+              itemBuilder: (context, index) {
+                final entry = entries[index];
+                return WineListTile(wineData: entry);
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

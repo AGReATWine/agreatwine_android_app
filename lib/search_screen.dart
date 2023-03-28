@@ -6,6 +6,7 @@ import 'dart:io';
 import 'search_results.dart';
 import 'main.dart';
 import 'agreat_drawer.dart';
+import 'search_sort_buttons.dart';
 
 class SearchScreen extends StatefulWidget {
   @override
@@ -19,6 +20,41 @@ class _SearchScreenState extends State<SearchScreen> {
   bool _sortByQP = false;
   bool _showSortButtons = false;
   bool _sortAscending = false; // default sort order is ascending
+
+  Widget _buildSortButtons() {
+    return SortButtons(
+      sortByRS: _sortByRS,
+      sortByQP: _sortByQP,
+      sortAscending: _sortAscending,
+      onPressedRS: (sortByRS, sortByQP, sortAscending) {
+        setState(() {
+          _sortByRS = sortByRS;
+          _sortByQP = sortByQP;
+          _sortAscending = sortAscending;
+          _searchResults = List.from(_searchResults)..sort((a, b) {
+            int rsComparison =
+                (_sortAscending ? b['RS'] ?? 0 : a['RS'] ?? 0).compareTo(
+                    _sortAscending ? a['RS'] ?? 0 : b['RS'] ?? 0);
+            if (rsComparison != 0) {
+              return rsComparison;
+            } else {
+              return (a['RANK'] ?? 0).compareTo(b['RANK'] ?? 0);
+            }
+          });
+        });
+      },
+      onPressedQP: (sortByRS, sortByQP, sortAscending) {
+        setState(() {
+          _sortByRS = sortByRS;
+          _sortByQP = sortByQP;
+          _sortAscending = sortAscending;
+          _searchResults = List.from(_searchResults)..sort((a, b) => sortByQP
+              ? (b['QP'] ?? 0).compareTo(a['QP'] ?? 0)
+              : (a['QP'] ?? 0).compareTo(b['QP'] ?? 0));
+        });
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,44 +87,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   });
                 },
               ),
-              if (_showSortButtons) 
-                Padding(
-                  padding: EdgeInsets.only(left: 16.0),
-                  child: ElevatedButton(
-                    child: Text('Sort by RS'),
-                    onPressed: () async {
-                      setState(() {
-                        _sortByRS = !_sortByRS;
-                        _sortByQP = false;
-                        _sortAscending = !_sortAscending; // toggle sort order
-                        _searchResults = List.from(_searchResults)..sort((a, b) {
-                          int rsComparison = (_sortAscending ? b['RS'] ?? 0 : a['RS'] ?? 0).compareTo(_sortAscending ? a['RS'] ?? 0 : b['RS'] ?? 0);
-                          if (rsComparison != 0) {
-                            return rsComparison;
-                          } else {
-                            return (a['RANK'] ?? 0).compareTo(b['RANK'] ?? 0);
-                          }
-                        });
-                      });
-                    },
-                  ),
-                ),
-              if (_showSortButtons) // conditionally render sort buttons
-                Padding(
-                  padding: EdgeInsets.only(left: 16.0),
-                  child: ElevatedButton(
-                    child: Text('Sort by QP'),
-                    onPressed: () {
-                      setState(() {
-                        _sortByQP = !_sortByQP;
-                        _sortByRS = false;
-                        _searchResults = List.from(_searchResults)..sort((a, b) => _sortByQP
-                            ? (b['QP'] ?? 0).compareTo(a['QP'] ?? 0)
-                            : (a['QP'] ?? 0).compareTo(b['QP'] ?? 0));
-                      });
-                    },
-                  ),
-                )
+              if (_showSortButtons) _buildSortButtons()
             ],
           ),
           Expanded(
