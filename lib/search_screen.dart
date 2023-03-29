@@ -70,7 +70,6 @@ class _SearchScreenState extends State<SearchScreen> {
             controller: _searchController,
             decoration: InputDecoration(
               hintText: 'Search...',
-              border: OutlineInputBorder(),
             ),
           ),
           SizedBox(height: 16),
