@@ -21,7 +21,13 @@ class SingleWineTile extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text('${result['WineryName']} | ${result['AppellationLevel']} ${result['AppellationName']} | ${result['Region']}',style: TextStyle(fontSize: fontSizeDesc)),
+                Expanded(
+                  child: Text(
+                      '${result['Pairing']}',
+                      style: TextStyle(fontSize: fontSizeDesc),
+                      softWrap: true,
+                  ),
+              ),
               ],
             ),
             Row(
@@ -117,6 +123,7 @@ class SingleWineTile extends StatelessWidget {
           'appellationName': result['AppellationName'],
           'region': result['Region'],
           'grapes': result['Grapes'],
+          'pairing': result['Pairing'],
           'agingMonths': result['AgingMonths'],
           'agingType': result['AgingType'],
           'rsScore': result['RS'],

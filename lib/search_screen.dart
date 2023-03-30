@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart';
 import 'dart:io';
 import 'search_results.dart';
 import 'main.dart';
+import 'translations.dart';
 import 'navigation.dart';
 import 'search_sort_buttons.dart';
 
@@ -59,6 +62,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var translations = Translations.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('AGReaTWine'),
@@ -73,29 +77,44 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
           ),
           SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(width: 16),
-              ElevatedButton(
-                child: Text('Search'),
-                onPressed: () async {
-                  String query = _searchController.text;
-                  _searchResults = await _search(query);
-                  setState(() {
-                    _showSortButtons = true;
-                  });
-                },
-              ),
-              if (_showSortButtons) _buildSortButtons()
-            ],
+          Padding(
+            padding: const EdgeInsets.only(bottom: 20.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(width: 16),
+                ElevatedButton(
+                  child: Text('Search'),
+                  onPressed: () async {
+                    String query = _searchController.text;
+                    _searchResults = await _search(query);
+                    setState(() {
+                      _showSortButtons = true;
+                    });
+                  },
+                ),
+                if (_showSortButtons) _buildSortButtons()
+              ],
+            ),
           ),
           Expanded(
             child: SearchResults(searchResults: _searchResults),
           ),
         ],
       ),
-      bottomNavigationBar: AGreatBottomNavigationBarH(currentIndex: _currentIndex),
+      bottomNavigationBar: AGreatBottomNavigationBarH(
+        currentIndex: _currentIndex,
+        items: [
+          BottomNavigationBarItem(
+            label: translations.home,
+            icon: Icon(Icons.home),
+          ),
+          BottomNavigationBarItem(
+            label: translations.search,
+            icon: Icon(Icons.search),
+          ),
+        ],
+      ),
     );
   }
 
@@ -105,8 +124,8 @@ class _SearchScreenState extends State<SearchScreen> {
     final database = await openDatabase(path);
 
     final results = await database.rawQuery(
-        'SELECT * FROM allwines WHERE FullName LIKE ? OR WineryName LIKE ?',
-        ['%$query%', '%$query%']);
+        'SELECT * FROM allwines WHERE FullName LIKE ? OR WineryName LIKE ? OR Pairing LIKE ?',
+        ['%$query%', '%$query%', '%$query%']);
 
     return results;
   }

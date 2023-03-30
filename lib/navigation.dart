@@ -75,22 +75,16 @@ class AGreatBottomNavigationBar extends StatelessWidget {
 
 class AGreatBottomNavigationBarH extends StatelessWidget {
   final int currentIndex;
-  const AGreatBottomNavigationBarH({Key? key, required this.currentIndex}) : super(key: key);
+  final List<BottomNavigationBarItem> items;
+  
+  const AGreatBottomNavigationBarH({Key? key, required this.currentIndex, required this.items}) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       currentIndex: currentIndex,
-      items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.search),
-          label: 'Search',
-        ),
-      ],
+      items: items,
       onTap: (int index) {
         switch (index) {
           case 0:

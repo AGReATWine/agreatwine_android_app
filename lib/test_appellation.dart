@@ -90,6 +90,7 @@ class EntriesScreen extends StatefulWidget {
 
 class _EntriesScreenState extends State<EntriesScreen> {
   List<Map<String, dynamic>> entries = [];
+  List<Map<String, dynamic>> groupedEntries = [];
   TextEditingController _searchController = TextEditingController();
 
   @override
@@ -98,7 +99,28 @@ class _EntriesScreenState extends State<EntriesScreen> {
     searchEntries().then((results) {
       setState(() {
         entries = results;
+        _groupEntriesByWineType();
       });
+    });
+  }
+
+  void _groupEntriesByWineType() {
+    groupedEntries = [];
+    Map<String, List<Map<String, dynamic>>> wineTypeMap = {};
+    entries.forEach((entry) {
+      String wineType = entry['WineType'];
+      if (!wineTypeMap.containsKey(wineType)) {
+        wineTypeMap[wineType] = [];
+      }
+      wineTypeMap[wineType]!.add(entry);
+    });
+    wineTypeMap.forEach((wineType, entries) {
+      if (entries.isNotEmpty) {
+        groupedEntries.add({
+          'WineType': wineType,
+          'Entries': entries,
+        });
+      }
     });
   }
 
@@ -107,84 +129,22 @@ class _EntriesScreenState extends State<EntriesScreen> {
     searchEntries().then((results) {
       setState(() {
         entries = results;
+        _groupEntriesByWineType();
       });
     });
   }
 
-Future<List<Map<String, dynamic>>> searchEntries() async {
-  var databasesPath = await getDatabasesPath();
-  String path = join(databasesPath, 'allwines2.db');
+  Future<List<Map<String, dynamic>>> searchEntries() async {
+    var databasesPath = await getDatabasesPath();
+    String path = join(databasesPath, 'allwines2.db');
 
-  Database database = await openDatabase(path);
-  List<Map<String, dynamic>> results = await database.rawQuery(
-    "SELECT * FROM allwines WHERE AppellationName = ? AND Entry = 1 AND FullName LIKE ?",
-    [widget.appellationName, '%${_searchController.text}%'], // filter by the search text field
-  );
-  await database.close();
-  return results;
-}
-
-  bool _sortByRS = false;
-  bool _sortByQP = false;
-  bool _showSortButtons = false;
-  bool _sortAscending = false; // default sort order is ascending
-
-  Widget _buildSortButtons() {
-    return Column(
-      children: [
-        TextField(
-          controller: _searchController,
-          decoration: InputDecoration(
-            hintText: 'Search',
-            suffixIcon: IconButton(
-              icon: Icon(Icons.clear),
-              onPressed: _resetFilter,
-            ),
-          ),
-          onChanged: (value) {
-            setState(() {
-              entries = entries.where((entry) =>
-                  entry['FullName']
-                      .toLowerCase()
-                      .contains(value.toLowerCase()))
-                  .toList();
-            });
-          },
-        ),
-        SortButtons(
-          sortByRS: _sortByRS,
-          sortByQP: _sortByQP,
-          sortAscending: _sortAscending,
-          onPressedRS: (sortByRS, sortByQP, sortAscending) {
-            setState(() {
-              _sortByRS = sortByRS;
-              _sortByQP = sortByQP;
-              _sortAscending = sortAscending;
-              entries = List.from(entries)..sort((a, b) {
-                int rsComparison =
-                    (_sortAscending ? b['RS'] ?? 0 : a['RS'] ?? 0).compareTo(
-                        _sortAscending ? a['RS'] ?? 0 : b['RS'] ?? 0);
-                if (rsComparison != 0) {
-                  return rsComparison;
-                } else {
-                  return (a['RANK'] ?? 0).compareTo(b['RANK'] ?? 0);
-                }
-              });
-            });
-          },
-          onPressedQP: (sortByRS, sortByQP, sortAscending) {
-            setState(() {
-              _sortByRS = sortByRS;
-              _sortByQP = sortByQP;
-              _sortAscending = sortAscending;
-              entries = List.from(entries)..sort((a, b) => sortByQP
-                  ? (b['QP'] ?? 0).compareTo(a['QP'] ?? 0)
-                  : (a['QP'] ?? 0).compareTo(b['QP'] ?? 0));
-            });
-          },
-        )
-      ]
+    Database database = await openDatabase(path);
+    List<Map<String, dynamic>> results = await database.rawQuery(
+      "SELECT * FROM allwines WHERE AppellationName = ? AND Entry = 1 AND FullName LIKE ?",
+      [widget.appellationName, '%${_searchController.text}%'], // filter by the search text field
     );
+    await database.close();
+    return results;
   }
 
   @override
@@ -195,13 +155,38 @@ Future<List<Map<String, dynamic>>> searchEntries() async {
       ),
       body: Column(
         children: [
-          _buildSortButtons(), // add the sort buttons widget
           Expanded(
             child: ListView.builder(
-              itemCount: entries.length,
+              itemCount: groupedEntries.length,
               itemBuilder: (context, index) {
-                final entry = entries[index];
-                return SingleWineTile(result: entry);
+                final group = groupedEntries[index];
+                return group['Entries'].isNotEmpty
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0, vertical: 8.0),
+                            child: Text(
+                              group['WineType'],
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16.0,
+                              ),
+                            ),
+                          ),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: ClampingScrollPhysics(),
+                            itemCount: group['Entries'].length,
+                            itemBuilder: (context, index) {
+                              final entry = group['Entries'][index];
+                              return SingleWineTile(result: entry);
+                            },
+                          ),
+                        ],
+                      )
+                    : SizedBox.shrink();
               },
             ),
           ),
