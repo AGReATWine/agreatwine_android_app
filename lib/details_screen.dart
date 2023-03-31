@@ -181,20 +181,13 @@ class WineDetailsScreen extends StatelessWidget {
             ),
           ),
         ),
-        Column(
-          children: [
-            Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Expanded(
-                      child: Text(wineDetails['pairing'].replaceAll(' – ', '\n'), style: TextStyle(fontSize: 18))
-                    ),
-                    ),
-                ],
-            ),
-          ],
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          child: Row(
+            children: [
+              Text(wineDetails['pairing'].replaceAll(' – ', '\n'), style: TextStyle(fontSize: 18))
+            ]
+          ),
         ),
       ],
     );
