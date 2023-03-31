@@ -94,7 +94,7 @@ class WineDetailsScreen extends StatelessWidget {
             child: Row(
               children: [
                 Container(
-                  child: Icon(Icons.check_circle, color: appColors.primaryDark),
+                  child: Icon(Icons.list, color: appColors.primaryDark),
                 ),
                 Text(
                   ' Details',
@@ -110,7 +110,7 @@ class WineDetailsScreen extends StatelessWidget {
             style: TextStyle(fontSize: 18, color: Colors.black87),
             child: Table(
               columnWidths: {
-                0: FlexColumnWidth(0.3),
+                0: FlexColumnWidth(0.35),
               },
               children: [
                 TableRow(
@@ -171,7 +171,7 @@ class WineDetailsScreen extends StatelessWidget {
             child: Row(
               children: [
                 Container(
-                  child: Icon(Icons.check_circle, color: appColors.primaryDark),
+                  child: Icon(Icons.food_bank, color: appColors.primaryDark),
                 ),
                 Text(
                   ' Pairings',
@@ -311,7 +311,7 @@ class WineDetailsScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          margin: EdgeInsets.only(top: 15, bottom: 15),
+          margin: EdgeInsets.only(top: 15),
           padding: EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
             color: appColors.primaryLight,
@@ -332,7 +332,7 @@ class WineDetailsScreen extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.symmetric(horizontal: 0.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -343,18 +343,21 @@ class WineDetailsScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Text(vintages[i]),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Icon(Icons.star),
-                          Text(evaluations[i]),
-                          Text('  '),
-                          Icon(Icons.rule),
-                          Text(scoreAvg[i]),
+                          Text(vintages[i], style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                          Row(
+                            children: [
+                              Icon(Icons.star),
+                              Text(evaluations[i]),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Icon(Icons.rule),
+                              Text(scoreAvg[i]),
+                            ],
+                          ),
                           IconButton(
                             onPressed: () {
                               showModalBottomSheet(
