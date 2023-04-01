@@ -11,7 +11,7 @@ class WineDetailsScreen extends StatelessWidget {
 
   Future<List<Map<String, dynamic>>> _getWineDetails(String fullName, String wineryName) async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'allwines2.db');
+    final path = join(dbPath, 'allwines.db');
     final database = await openDatabase(path);
 
     final results = await database.rawQuery(

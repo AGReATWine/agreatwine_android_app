@@ -35,25 +35,25 @@ class SingleWineTile extends StatelessWidget {
               title: Text(result['FullName'],style: TextStyle(fontSize: fontSizeName,),maxLines: 1,overflow: TextOverflow.ellipsis,),
               subtitle: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Row(
+                      Row(children: [
+                        Text('${result['WineryName']} | ${result['AppellationLevel']} ${result['AppellationName']} | ${result['Region']}',style: TextStyle(fontSize: fontSizeDesc)),
+                      ],),
+                      Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Expanded(
-  child: SizedBox(
-    height: 40, // adjust the value as needed
-    child: Text(
-      '${result['Pairing']}',
-      style: TextStyle(fontSize: fontSizeDesc),
-      maxLines: 2,
-      overflow: TextOverflow.ellipsis,
-    ),
-  ),
-)
+                          child: SizedBox(
+                            height: 40, // adjust the value as needed
+                            child: Text(
+                              '${result['Pairing']}',
+                              style: TextStyle(fontSize: fontSizeDesc),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        )
                       ],
                     ),
-                  ),
                   rsSectionWidth > 0 ? Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
