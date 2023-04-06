@@ -22,11 +22,11 @@ void main() async {
 
 Future<void> copyDatabase() async {
   final dbPath = await getDatabasesPath();
-  final path = join(dbPath, 'allwines.db');
+  final path = join(dbPath, 'allwines5.db');
 
   final fileExists = await databaseExists(path);
   if (!fileExists) {
-    final data = await rootBundle.load('assets/allwines.db');
+    final data = await rootBundle.load('assets/allwines5.db');
     final bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
     await File(path).writeAsBytes(bytes);
   }

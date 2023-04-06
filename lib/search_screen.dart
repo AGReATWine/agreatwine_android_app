@@ -10,6 +10,7 @@ import 'main.dart';
 import 'translations.dart';
 import 'navigation.dart';
 import 'search_sort_buttons.dart';
+import 'search_results.dart';
 
 class SearchScreen extends StatefulWidget {
   @override
@@ -21,6 +22,8 @@ class _SearchScreenState extends State<SearchScreen> {
   List<Map<String, dynamic>> _searchResults = [];
   bool _sortByRS = false;
   bool _sortByQP = false;
+  bool _hasSearched = false;
+
   bool _showSortButtons = false;
   bool _sortAscending = false; // default sort order is ascending
   int _currentIndex = 1;
@@ -71,7 +74,10 @@ Widget build(BuildContext context) {
     body: Column(
       children: [
         Expanded(
-          child: SearchResults(searchResults: _searchResults),
+          child: SearchResults(
+            searchResults: _searchResults,
+            hasSearched: _hasSearched,
+            ),
         ),
         if (_showSortButtons) _buildSortButtons(),
         Container(
@@ -86,7 +92,7 @@ Widget build(BuildContext context) {
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    hintText: 'Search...',
+                    hintText: 'Search for wines, wineries or pairings',
                   ),
                 ),
               ),
@@ -100,6 +106,7 @@ Widget build(BuildContext context) {
                     _searchResults = await _search(query);
                     setState(() {
                       _showSortButtons = true;
+                      _hasSearched = true;
                     });
                   },
                 ),
@@ -127,7 +134,7 @@ Widget build(BuildContext context) {
 
   Future<List<Map<String, dynamic>>> _search(String query) async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'allwines.db');
+    final path = join(dbPath, 'allwines5.db');
     final database = await openDatabase(path);
 
     final results = await database.rawQuery(
