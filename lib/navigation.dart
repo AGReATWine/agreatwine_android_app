@@ -36,39 +36,51 @@ class AGreatDrawer extends StatelessWidget {
   }
 }
 
-class AGreatBottomNavigationBar extends StatelessWidget {
-  const AGreatBottomNavigationBar({Key? key}) : super(key: key);
+class AGreatBottomNavigationBar extends StatelessWidget {  
+const AGreatBottomNavigationBar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      selectedItemColor: Colors.grey,
-      items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home, color: Colors.grey),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.search),
-          label: 'Search',
-        ),
-      ],
-      onTap: (int index) {
-        switch (index) {
-          case 0:
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HomeScreen()),
-            );
-            break;
-          case 1:
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SearchScreen()),
-            );
-            break;
-        }
-      },
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 0.5,
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: BottomNavigationBar(
+        selectedItemColor: Colors.grey,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home, color: Colors.grey),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
+          ),
+        ],
+        onTap: (int index) {
+          switch (index) {
+            case 0:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HomeScreen()),
+              );              
+              break;
+            case 1:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SearchScreen()),
+              );
+              break;
+          }
+        },
+      ),
     );
   }
 }
@@ -79,28 +91,38 @@ class AGreatBottomNavigationBarH extends StatelessWidget {
   
   const AGreatBottomNavigationBarH({Key? key, required this.currentIndex, required this.items}) : super(key: key);
 
-
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      currentIndex: currentIndex,
-      items: items,
-      onTap: (int index) {
-        switch (index) {
-          case 0:
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HomeScreen()),
-            );
-            break;
-          case 1:
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SearchScreen()),
-            );
-            break;
-        }
-      },
+    return Container(
+      decoration: BoxDecoration(
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: Colors.black.withOpacity(0.3),
+        //     blurRadius: 8,
+        //     offset: const Offset(0, 3),
+        //   ),
+        // ],
+      ),
+      child: BottomNavigationBar(
+        currentIndex: currentIndex,
+        items: items,
+        onTap: (int index) {
+          switch (index) {
+            case 0:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HomeScreen()),
+              );
+              break;
+            case 1:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SearchScreen()),
+              );
+              break;
+          }
+        },
+      ),
     );
   }
 }

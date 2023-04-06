@@ -61,30 +61,40 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    var translations = Translations.of(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('AGReaTWine'),
-      ),
-      drawer: const AGreatDrawer(),
-      body: Column(
-        children: [
-          TextField(
-            controller: _searchController,
-            decoration: InputDecoration(
-              hintText: 'Search...',
-            ),
-          ),
-          SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(width: 16),
-                ElevatedButton(
-                  child: Text('Search'),
+Widget build(BuildContext context) {
+  var translations = Translations.of(context);
+  return Scaffold(
+    appBar: AppBar(
+      title: Text('AGReaTWine'),
+    ),
+    drawer: const AGreatDrawer(),
+    body: Column(
+      children: [
+        Expanded(
+          child: SearchResults(searchResults: _searchResults),
+        ),
+        if (_showSortButtons) _buildSortButtons(),
+        Container(
+          padding: EdgeInsets.only(bottom: 15),
+          height: 60,
+          child: Stack(
+            children: [
+              Positioned(
+                bottom: 0,
+                left: 15,
+                right: 10,
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search...',
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 0,
+                right: 15,
+                child: IconButton(
+                  icon: Icon(Icons.search, color: Colors.blue),
                   onPressed: () async {
                     String query = _searchController.text;
                     _searchResults = await _search(query);
@@ -93,30 +103,27 @@ class _SearchScreenState extends State<SearchScreen> {
                     });
                   },
                 ),
-                if (_showSortButtons) _buildSortButtons()
-              ],
-            ),
+              ),
+            ],
           ),
-          Expanded(
-            child: SearchResults(searchResults: _searchResults),
-          ),
-        ],
-      ),
-      bottomNavigationBar: AGreatBottomNavigationBarH(
-        currentIndex: _currentIndex,
-        items: [
-          BottomNavigationBarItem(
-            label: translations.home,
-            icon: Icon(Icons.home),
-          ),
-          BottomNavigationBarItem(
-            label: translations.search,
-            icon: Icon(Icons.search),
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+    bottomNavigationBar: AGreatBottomNavigationBarH(
+      currentIndex: _currentIndex,
+      items: [
+        BottomNavigationBarItem(
+          label: translations.home,
+          icon: Icon(Icons.home),
+        ),
+        BottomNavigationBarItem(
+          label: translations.search,
+          icon: Icon(Icons.search),
+        ),
+      ],
+    ),
+  );
+}
 
   Future<List<Map<String, dynamic>>> _search(String query) async {
     final dbPath = await getDatabasesPath();

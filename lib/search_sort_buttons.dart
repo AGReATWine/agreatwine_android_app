@@ -18,23 +18,42 @@ class SortButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Padding(
-          padding: EdgeInsets.only(left: 16.0),
-          child: ElevatedButton(
-            child: Text('Sort by RS'),
-            onPressed: () => onPressedRS(!sortByRS, false, !sortAscending),
+    return Container(
+      height: 35,
+      padding: EdgeInsets.all(0),
+      decoration: BoxDecoration(
+        color: Color(0xFAFAFA).withOpacity(1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.25),
+            spreadRadius: 1,
+            blurRadius: 1,
+            offset: Offset(0, -1), // changes position of shadow
           ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.only(top: 8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: ElevatedButton(
+                child: Text('Sort by RS'),
+                onPressed: () => onPressedRS(!sortByRS, false, !sortAscending),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: ElevatedButton(
+                child: Text('Sort by QP'),
+                onPressed: () => onPressedQP(false, !sortByQP, sortAscending),
+              ),
+            ),
+          ],
         ),
-        Padding(
-          padding: EdgeInsets.only(left: 16.0),
-          child: ElevatedButton(
-            child: Text('Sort by QP'),
-            onPressed: () => onPressedQP(false, !sortByQP, sortAscending),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
