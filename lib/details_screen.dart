@@ -3,6 +3,8 @@ import 'navigation.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'main.dart';
+import 'appellation.dart';
+import 'winery.dart';
 
 class WineDetailsScreen extends StatelessWidget {
   final Map<String, dynamic> wineDetails;
@@ -63,7 +65,7 @@ class WineDetailsScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  _buildDetailsWidget(wineDetails),
+                  _buildDetailsWidget(context, wineDetails),
                   _buildPairingWidget(wineDetails),
                   _buildScoreWidget(wineDetails),
                   _buildVintageWidget(vintages, evaluations, scoreAvg, tasting, context),
@@ -80,7 +82,7 @@ class WineDetailsScreen extends StatelessWidget {
   }
 
   /// Builds the details section of the screen
-  Widget _buildDetailsWidget(Map<String, dynamic> wineDetails) {
+  Widget _buildDetailsWidget(BuildContext context, Map<String, dynamic> wineDetails) {
     return Column(
       children: [
         Container(
@@ -116,13 +118,56 @@ class WineDetailsScreen extends StatelessWidget {
                 TableRow(
                   children: [
                     Text('Winery'),
-                    Text(wineDetails['wineryName']),
+                    Row(
+                      children: [
+                        Text('${wineDetails['wineryName']}' '  '),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => WineryEntriesScreen(
+                                  wineryName: wineDetails['wineryName'],
+                                ),
+                              ),
+                            );
+                          },
+                          child: Icon(
+                            Icons.link,
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ],
+                    )
                   ],
                 ),
                 TableRow(
                   children: [
                     Text('Appellation'),
-                    Text('${wineDetails['appellationLevel']}' ' ' '${wineDetails['appellationName']}'),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text('${wineDetails['appellationLevel']}' ' ' '${wineDetails['appellationName']}' '  ', 
+                          softWrap: true),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => EntriesScreen(
+                                  appellationName: wineDetails['appellationName'],
+                                ),
+                              ),
+                            );
+                          },
+                          child: Icon(
+                            Icons.link,
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ],
+                    )
                   ],
                 ),
                 TableRow(
@@ -185,7 +230,7 @@ class WineDetailsScreen extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 10),
           child: Row(
             children: [
-              Text(wineDetails['pairing'].replaceAll(' – ', '\n'), style: TextStyle(fontSize: 18))
+              Text(wineDetails['pairing'].replaceAll(' – nd', '').replaceAll(' – ', '\n'), style: TextStyle(fontSize: 18))
             ]
           ),
         ),
@@ -193,73 +238,113 @@ class WineDetailsScreen extends StatelessWidget {
     );
   }
 
+  Future<int> _getRank(String appellationName) async {
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, 'allwines.db');
+    final database = await openDatabase(path);
+
+    final results = await database.rawQuery(
+      'SELECT COUNT(*) FROM allwines WHERE AppellationName = ? AND Entry = ?',
+      [wineDetails['appellationName'], 1],
+    );
+
+     return (results.first.values.first as num).toInt();
+  }
   /// Builds the score section of the screen
   Widget _buildScoreWidget(Map<String, dynamic> wineDetails) {
-    return Column(
-      children: [
-        Container(
-          margin: EdgeInsets.only(top: 15, bottom: 15),
-          padding: EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
-            color: appColors.primaryLight,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: Row(
-              children: [
-                Container(
-                  child: Icon(Icons.check_circle, color: appColors.primaryDark),
-                ),
-                Text(
-                  ' Scores',
-                  style: TextStyle(fontSize: 25, color: appColors.primaryDark, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-          ),
+    Color _getScoreColor(double score) {
+      if (score > 90) {
+        return Colors.blue;
+      } else if (score >= 75 && score <= 90) {
+        return Colors.green;
+      } else if (score >= 26 && score <= 74) {
+        return Colors.yellow;
+      } else {
+        return Colors.red;
+      }
+    }
+  return Column(
+    children: [
+      Container(
+        margin: EdgeInsets.only(top: 15, bottom: 15),
+        padding: EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: appColors.primaryLight,
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Column(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: Row(
             children: [
-              Row(
-                children: [
-                  Text('RS ', style: TextStyle(fontSize: 21)),
-                  _buildStack(
-                    score: wineDetails['rsScore'],
-                    color: Colors.blue,
-                    height: 30,
-                    width: 200,
-                    iconColor: Colors.black,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: Icon(Icons.leaderboard),
-                  ),
-                  Text(wineDetails['rank']),
-                ],
+              Container(
+                child: Icon(Icons.check_circle, color: appColors.primaryDark),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: Row(
-                  children: [
-                    Text('QP ', style: TextStyle(fontSize: 21)),
-                    _buildStack(
-                      score: wineDetails['qpScore'],
-                      color: Colors.green,
-                      height: 30,
-                      width: 200,
-                      iconColor: Colors.black,
-                    ),
-                  ],
-                ),
+              Text(
+                ' Scores',
+                style: TextStyle(fontSize: 25, color: appColors.primaryDark, fontWeight: FontWeight.bold),
               ),
             ],
           ),
         ),
-      ],
-    );
-  }
+      ),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Text('RS ', style: TextStyle(fontSize: 21)),
+                _buildStack(
+                  score: wineDetails['rsScore'],
+                  color: Colors.blue,
+                  height: 30,
+                  width: 200,
+                  iconColor: Colors.black,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0),
+                  child: Icon(Icons.leaderboard),
+                ),
+                Text(' '),
+                FutureBuilder<int>(
+                  future: _getRank(wineDetails['appellationName']),
+                  builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+                    if (snapshot.hasData) {
+                      return Row(
+                        children: [
+                          Text(wineDetails['rank'], style: TextStyle(color: _getScoreColor(((int.parse(snapshot.data.toString()) - int.parse(wineDetails['rank']) + 1) / int.parse(snapshot.data.toString()) * 100)), fontWeight: FontWeight.bold, fontSize: 20)),
+                          Text('/' + snapshot.data.toString())
+                        ],
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text('Error');
+                    } else {
+                      return CircularProgressIndicator();
+                    }
+                  },
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: Row(
+                children: [
+                  Text('QP ', style: TextStyle(fontSize: 21)),
+                  _buildStack(
+                    score: wineDetails['qpScore'],
+                    color: Colors.green,
+                    height: 30,
+                    width: 200,
+                    iconColor: Colors.black,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
+}
 
   /// Returns a stacked widget to indicate the score
   Widget _buildStack({
@@ -357,14 +442,19 @@ class WineDetailsScreen extends StatelessWidget {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return Container(
+                                    padding: EdgeInsets.all(16.0), // add padding
                                     child: tasting[i] == null
-                                        ? Padding(
-                                      padding: EdgeInsets.symmetric(vertical: 20),
-                                      child: Center(
-                                        child: Text("No tasting notes for this vintage", softWrap: true, textAlign: TextAlign.center, style: TextStyle(fontSize: 20)),
-                                      ),
-                                    )
-                                        : Text(tasting[i], softWrap: true, style: TextStyle(fontSize: 20)),
+                                      ? Text(
+                                            "No tasting notes for this vintage", 
+                                            softWrap: true, 
+                                            textAlign: TextAlign.center, 
+                                            style: TextStyle(fontSize: 20)
+                                          )
+                                      : Text(
+                                          tasting[i], 
+                                          softWrap: true, 
+                                          style: TextStyle(fontSize: 20)
+                                        ),
                                   );
                                 },
                               );

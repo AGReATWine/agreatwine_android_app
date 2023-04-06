@@ -36,7 +36,9 @@ class SingleWineTile extends StatelessWidget {
               subtitle: Column(
                 children: [
                       Row(children: [
-                        Text('${result['WineryName']} | ${result['AppellationLevel']} ${result['AppellationName']} | ${result['Region']}',style: TextStyle(fontSize: fontSizeDesc)),
+                        Expanded(
+                        child: Text('${result['WineryName']} | ${result['AppellationLevel']} ${result['AppellationName']} | ${result['Region']}',style: TextStyle(fontSize: fontSizeDesc), maxLines: 1, overflow: TextOverflow.ellipsis),
+                        )
                       ],),
                       Row(
                       mainAxisAlignment: MainAxisAlignment.start,
