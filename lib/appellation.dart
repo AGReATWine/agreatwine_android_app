@@ -12,7 +12,7 @@ import 'single_wine_tile.dart';
 
 Future<List<Map<String, dynamic>>> searchWines() async {
   var databasesPath = await getDatabasesPath();
-  String path = join(databasesPath, 'allwines5.db');
+  String path = join(databasesPath, 'allwines8.db');
   
   Database database = await openDatabase(path);
   List<Map<String, dynamic>> results = await database.rawQuery(
@@ -154,7 +154,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
 
   Future<List<Map<String, dynamic>>> searchEntries() async {
     var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, 'allwines5.db');
+    String path = join(databasesPath, 'allwines8.db');
 
     Database database = await openDatabase(path);
     List<Map<String, dynamic>> results = await database.rawQuery(

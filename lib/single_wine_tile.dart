@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'search_results.dart';
 import 'details_screen.dart';
+import 'main.dart';
+
+
 
 class SingleWineTile extends StatelessWidget {
   double fontSizeName = 19.0;
@@ -15,6 +18,7 @@ class SingleWineTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('debug: ' + result['RANK'].toString());
     return SizedBox(
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
@@ -30,132 +34,176 @@ class SingleWineTile extends StatelessWidget {
           // update tileHeight with the actual calculated height
           tileHeight = contentHeight;  
           return Container(
-            margin: EdgeInsets.only(top: 10),
-            child: ListTile(
-              title: Text(result['FullName'],style: TextStyle(fontSize: fontSizeName,),maxLines: 1,overflow: TextOverflow.ellipsis,),
-              subtitle: Column(
-                children: [
-                      Row(children: [
-                        Expanded(
-                        child: Text('${result['WineryName']} | ${result['AppellationLevel']} ${result['AppellationName']} | ${result['Region']}',style: TextStyle(fontSize: fontSizeDesc), maxLines: 1, overflow: TextOverflow.ellipsis),
-                        )
-                      ],),
-                      Row(
+            decoration: BoxDecoration(
+              border: Border(bottom: BorderSide(width: 0.5))
+            ),
+            child: Container(
+              margin: EdgeInsets.only(bottom: 8),
+              child: ListTile(
+                title: Text(result['FullName'],style: TextStyle(fontSize: fontSizeName, color: utils.primaryLight),maxLines: 1,overflow: TextOverflow.ellipsis,),
+                subtitle: Column(
+                  children: [
+                        Row(children: [
+                          Text('${result['WineryName']} | ',style: TextStyle(fontSize: fontSizeDesc, fontWeight: FontWeight.bold)),
+                          Expanded(
+                          child: Text('${result['AppellationLevel']} ${result['AppellationName']} | ${result['Region']}',style: TextStyle(fontSize: fontSizeDesc), maxLines: 1, overflow: TextOverflow.ellipsis),
+                          )
+                        ],),
+                        Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: SizedBox(
+                              height: 50, // adjust the value as needed
+                              child: Text(
+                                '${result['Pairing']}',
+                                style: TextStyle(fontSize: fontSizeDesc),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    rsSectionWidth > 0 ? Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: SizedBox(
-                            height: 40, // adjust the value as needed
-                            child: Text(
-                              '${result['Pairing']}',
-                              style: TextStyle(fontSize: fontSizeDesc),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
+                        Text('RS ',style: TextStyle(fontSize: fontSizeSymbol)),
+                        Stack(
+                          children: [
+                            Container(
+                              width: rsSectionWidth,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade300,
+                                borderRadius: BorderRadius.circular(5),
+                                
+                              ),
                             ),
-                          ),
-                        )
+                            Positioned(
+                              top: 0,
+                              left: 0,
+                              child: Container(
+                                width: rsBarWidth,
+                                height: 20,
+                                decoration: BoxDecoration(
+                                    color: Utils.getScoreColor(((rsBarWidth) - result['RANK'] + 1) / rsBarWidth * 100),
+                                    boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.shade500,
+                                      spreadRadius: 0,
+                                      blurRadius: 0,
+                                      offset: Offset(1, 0.5), // changes position of shadow
+                                    ),
+                                  ],
+                                  borderRadius: BorderRadius.circular(5)
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              top: 0,
+                              right: 1,
+                              child: Text(result['RS'].toInt().toString(), style: TextStyle(
+                                shadows: <Shadow>[
+                                  Shadow(
+                                    offset: Offset(0, 0),
+                                    blurRadius: 10.0,
+                                    color: Colors.white,
+                                  ),
+                                ],
+                              )),
+                            ),
+                          ],
+                        ),
+                        SizedBox(width: 6),
+                        Icon(Icons.leaderboard, color: utils.iconsColor, shadows: <Shadow>[Shadow(color: Colors.grey, blurRadius: 1.0, offset: Offset(.5, .5))]),
+                        Text(result['RANK'].toInt().toString() + ' ',style: TextStyle(fontSize: fontSizeSymbol)),
+                        Icon(Icons.star, color: utils.iconsColor, shadows: <Shadow>[Shadow(color: Colors.grey, blurRadius: 1.0, offset: Offset(.5, .5))]),
+                        Text(result['EvaluationAvg'],style: TextStyle(fontSize: fontSizeSymbol))
                       ],
-                    ),
-                  rsSectionWidth > 0 ? Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text('RS ',style: TextStyle(fontSize: fontSizeSymbol)),
-                      Stack(
-                        children: [
-                          Container(
-                            width: rsSectionWidth,
-                            height: 20,
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade300,
-                            ),
-                          ),
-                          Positioned(
-                            top: 0,
-                            left: 0,
-                            child: Container(
-                              width: rsBarWidth,
+                    ) : SizedBox(),
+                    SizedBox(height: 6),
+                    qpSectionWidth > 0 ? Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text('QP ',style: TextStyle(fontSize: fontSizeSymbol,)),
+                        Stack(
+                          children: [
+                            Container(
+                              width: qpSectionWidth,
                               height: 20,
                               decoration: BoxDecoration(
-                                color: Colors.blue,
+                                color: Colors.grey.shade300,
+                                borderRadius: BorderRadius.circular(5),
                               ),
                             ),
-                          ),
-                          Positioned(
-                            top: 0,
-                            right: 0,
-                            child: Text(result['RS'].toInt().toString()),
-                          ),
-                        ],
-                      ),
-                      SizedBox(width: 6),
-                      Icon(Icons.leaderboard),
-                      Text(result['RANK'],style: TextStyle(fontSize: fontSizeSymbol)),
-                      Icon(Icons.star),
-                      Text(result['EvaluationAvg'],style: TextStyle(fontSize: fontSizeSymbol))
-                    ],
-                  ) : SizedBox(),
-                  SizedBox(height: 6),
-                  qpSectionWidth > 0 ? Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text('QP ',style: TextStyle(fontSize: fontSizeSymbol,)),
-                      Stack(
-                        children: [
-                          Container(
-                            width: qpSectionWidth,
-                            height: 20,
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade300,
-                            ),
-                          ),
-                          Positioned(
-                            top: 0,
-                            left: 0,
-                            child: Container(
-                              width: qpBarWidth,
-                              height: 20,
-                              decoration: BoxDecoration(
-                                color: Colors.green,
+                            Positioned(
+                              top: 0,
+                              left: 0,
+                              child: Container(
+                                width: qpBarWidth,
+                                height: 20,
+                                decoration: BoxDecoration(
+                                  color: Utils.getScoreColor(((qpBarWidth) - result['QPRANK'] + 1) / qpBarWidth * 100),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.shade500,
+                                      spreadRadius: 0,
+                                      blurRadius: 0,
+                                      offset: Offset(1, 0.5), // changes position of shadow
+                                    ),
+                                  ],
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
                               ),
                             ),
-                          ),
-                          Positioned(
-                            top: 0,
-                            right: 0,
-                            child: Text(result['QP'].toInt().toString()),
-                          ),
-                        ],
-                      ),
-                      SizedBox(width: 6),
-                      Icon(Icons.euro),
-                      Text('${result['Price']}',style: TextStyle(fontSize: fontSizeSymbol,)),
-                    ],
-                  ) : SizedBox(),
-                ],
-              ),
-              onTap: () {
-              final wineDetails = {
-                'fullName': result['FullName'],
-                'wineryName': result['WineryName'],
-                'appellationLevel': result['AppellationLevel'],
-                'appellationName': result['AppellationName'],
-                'region': result['Region'],
-                'grapes': result['Grapes'],
-                'pairing': result['Pairing'],
-                'agingMonths': result['AgingMonths'],
-                'agingType': result['AgingType'],
-                'rsScore': result['RS'],
-                'qpScore': result['QP'],
-                'rank': result['RANK'],
-                'price': result['Price'],
-              };
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => WineDetailsScreen(wineDetails),
+                            Positioned(
+                              top: 0,
+                              right: 1,
+                              child: Text(result['QP'].toInt().toString(), style: TextStyle(
+                                shadows: <Shadow>[
+                                  Shadow(
+                                    offset: Offset(0, 0),
+                                    blurRadius: 10.0,
+                                    color: Colors.white,
+                                  ),
+                                ],
+                              ),),
+                            ),
+                          ],
+                        ),
+                        SizedBox(width: 6),
+                        Icon(Icons.euro, color: utils.iconsColor, shadows: <Shadow>[Shadow(color: Colors.grey, blurRadius: 1.0, offset: Offset(.5, .5))]),
+                        Text('${result['Price'].toInt()}',style: TextStyle(fontSize: fontSizeSymbol,)),
+                      ],
+                    ) : SizedBox(),
+                  ],
                 ),
-              );
-            },
+                onTap: () {
+                final wineDetails = {
+                  'fullName': result['FullName'],
+                  'wineryName': result['WineryName'],
+                  'appellationLevel': result['AppellationLevel'],
+                  'appellationName': result['AppellationName'],
+                  'region': result['Region'],
+                  'grapes': result['Grapes'],
+                  'pairing': result['Pairing'],
+                  'agingMonths': result['AgingMonths'],
+                  'agingType': result['AgingType'],
+                  'rsScore': result['RS'],
+                  'qpScore': result['QP'],
+                  'rank': result['RANK'],
+                  'qprank': result['QPRANK'],
+                  'price': result['Price'],
+                };
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WineDetailsScreen(wineDetails),
+                  ),
+                );
+              },
+              ),
             ),
           );
         },

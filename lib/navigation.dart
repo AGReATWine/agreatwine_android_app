@@ -16,9 +16,6 @@ class AGreatDrawer extends StatelessWidget {
           height: 118,
           child: DrawerHeader(
             child: Text('AGReaTWine'),
-            decoration: BoxDecoration(
-              color: Colors.blue,
-            ),
           ),
         ),
         ListTile(
@@ -53,10 +50,9 @@ const AGreatBottomNavigationBar({Key? key}) : super(key: key);
         ],
       ),
       child: BottomNavigationBar(
-        selectedItemColor: Colors.grey,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home, color: Colors.grey),
+            icon: Icon(Icons.home),
             label: 'Home',
           ),
           BottomNavigationBarItem(

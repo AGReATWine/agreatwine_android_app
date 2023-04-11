@@ -5,23 +5,67 @@ import 'package:sqflite/sqflite.dart';
 import 'main.dart';
 import 'appellation.dart';
 import 'winery.dart';
+import 'dart:math' as math;
+import 'package:syncfusion_flutter_charts/charts.dart';
+
+class PriceChartData {
+  PriceChartData(this.year, this.priceWine);
+  final String year;
+  final double priceWine;
+}
+
+final xxYears = List.generate(7, (index) => (2017 + index).toString());
+
 
 class WineDetailsScreen extends StatelessWidget {
   final Map<String, dynamic> wineDetails;
+  final ratingYearsMedianPriceList = [];
+
 
   WineDetailsScreen(this.wineDetails);
 
   Future<List<Map<String, dynamic>>> _getWineDetails(String fullName, String wineryName) async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'allwines5.db');
+    final path = join(dbPath, 'allwines8.db');
     final database = await openDatabase(path);
 
     final results = await database.rawQuery(
-      'SELECT Vintage, EvaluationAvg, ScoreAvg, Tasting, Grapes, AgingMonths, AgingType, Price FROM allwines WHERE FullName = ? AND WineryName = ? AND Entry = ?',
+        'SELECT AppellationNAme, RatingYear, Vintage, EvaluationAvg, ScoreAvg, Tasting, Grapes, AgingMonths, AgingType, Price FROM allwines WHERE FullName = ? AND WineryName = ? AND Entry = ?',
       [fullName, wineryName, 2],
     );
 
+    final appellationName = results[0]['AppellationName'];
+    final appellationEntries = await database.query(
+      'allwines',
+      where: 'AppellationName = ? AND Entry = ?',
+      whereArgs: [appellationName, 2],
+    );
+
+  final Map<double, List<double>> ratingYearToPriceMap = {};
+  appellationEntries.forEach((entry) {
+    final double ratingYear = entry['RatingYear'] as double;
+    final double priceAvg = entry['Price'] as double;
+    if (ratingYearToPriceMap.containsKey(ratingYear)) {
+      ratingYearToPriceMap[ratingYear]!.add(priceAvg);
+    } else {
+      ratingYearToPriceMap[ratingYear] = [priceAvg];
+    }
+  });
+  final List<Map<String, dynamic>> ratingYearMedianPriceList = [];
+  ratingYearToPriceMap.forEach((ratingYear, priceList) {
+      priceList.sort();
+      final double medianPrice = priceList.length % 2 == 0
+          ? (priceList[priceList.length ~/ 2] + priceList[(priceList.length ~/ 2) - 1]) / 2
+          : priceList[(priceList.length ~/ 2)];
+      ratingYearsMedianPriceList.add({'RatingYear': ratingYear, 'MedianPrice': medianPrice});
+    });
+
+    final ratingYearsList = results.map((result) =>
+      PriceChartData(result['RatingYear'].toString(), result['Price'] as double)
+    ).toList();
+
     return results.toList();
+    
   }
 
   @override
@@ -43,8 +87,16 @@ class WineDetailsScreen extends StatelessWidget {
             final agingMonths = details.map((detail) => detail['AgingMonths']).toList();
             final agingType = details.map((detail) => detail['AgingType']).toList();
             final rank = details.map((detail) => detail['RANK']).toList();
-            final price = details.map((detail) => detail['Price']).toList();
+            final priceWine = details.map((detail) => detail['Price'] as double).toList();
             final pairing = details.map((detail) => detail['Pairing']).toList();
+            final xYears = details.map((detail) => detail['RatingYear']).toList();
+            
+            final ratingYearsList = priceWine
+              .asMap()
+              .entries
+              .map((entry) => PriceChartData(xYears[entry.key].toInt().toString(), entry.value))
+              .toList();
+
 
             return SingleChildScrollView(
               child: Column(
@@ -58,7 +110,7 @@ class WineDetailsScreen extends StatelessWidget {
                         Expanded(
                           child: Text(
                             '${wineDetails['fullName']}',
-                            style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold),
+                            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                             softWrap: true,
                           ),
                         ),
@@ -69,6 +121,54 @@ class WineDetailsScreen extends StatelessWidget {
                   _buildPairingWidget(wineDetails),
                   _buildScoreWidget(wineDetails),
                   _buildVintageWidget(vintages, evaluations, scoreAvg, tasting, context),
+                  Container(
+                    margin: EdgeInsets.only(top: 15, bottom: 15),
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      color: utils.primaryLight,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Row(
+                        children: [
+                          Container(
+                            child: Icon(Icons.list, color: utils.primaryDark),
+                          ),
+                          Text(
+                            ' Price Charts',
+                            style: TextStyle(fontSize: 25, color: utils.primaryDark, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SfCartesianChart(
+                     primaryXAxis: CategoryAxis(
+                    title: AxisTitle(text: 'Rating Year'),
+                  ),
+                    primaryYAxis: NumericAxis(
+                      minimum: 0,
+                      maximum: 200,
+                      labelFormat: '{value}€'
+                    ),
+                    legend: Legend(isVisible: true, position: LegendPosition.top),
+                    series: <ChartSeries>[
+                      SplineSeries<PriceChartData, String>(
+                        dataSource: ratingYearsMedianPriceList.map((data) => PriceChartData(data['RatingYear'].toInt().toString(), data['MedianPrice'] as double)).toList(),
+                        xValueMapper: (PriceChartData year, _) => year.year,
+                        yValueMapper: (PriceChartData price, _) => price.priceWine,
+                        name: 'Avg Appellation Price',
+                        dataLabelSettings: DataLabelSettings(isVisible: false),
+                      ),
+                      SplineSeries<PriceChartData, String>(
+                        dataSource: ratingYearsList,
+                        xValueMapper: (PriceChartData year, _) => year.year,
+                        yValueMapper: (PriceChartData price, _) => price.priceWine,
+                        name: wineDetails['fullName'],
+                        dataLabelSettings: DataLabelSettings(isVisible: true),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             );
@@ -89,18 +189,18 @@ class WineDetailsScreen extends StatelessWidget {
           margin: EdgeInsets.only(top: 15, bottom: 15),
           padding: EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color: appColors.primaryLight,
+            color: utils.primaryLight,
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: Row(
               children: [
                 Container(
-                  child: Icon(Icons.list, color: appColors.primaryDark),
+                  child: Icon(Icons.list, color: utils.primaryDark),
                 ),
                 Text(
                   ' Details',
-                  style: TextStyle(fontSize: 25, color: appColors.primaryDark, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 25, color: utils.primaryDark, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -209,18 +309,18 @@ class WineDetailsScreen extends StatelessWidget {
           margin: EdgeInsets.only(top: 15, bottom: 15),
           padding: EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color: appColors.primaryLight,
+            color: utils.primaryLight,
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: Row(
               children: [
                 Container(
-                  child: Icon(Icons.food_bank, color: appColors.primaryDark),
+                  child: Icon(Icons.food_bank, color: utils.primaryDark),
                 ),
                 Text(
                   ' Pairings',
-                  style: TextStyle(fontSize: 25, color: appColors.primaryDark, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 25, color: utils.primaryDark, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -240,7 +340,7 @@ class WineDetailsScreen extends StatelessWidget {
 
   Future<int> _getRank(String appellationName) async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'allwines5.db');
+    final path = join(dbPath, 'allwines8.db');
     final database = await openDatabase(path);
 
     final results = await database.rawQuery(
@@ -269,18 +369,18 @@ class WineDetailsScreen extends StatelessWidget {
         margin: EdgeInsets.only(top: 15, bottom: 15),
         padding: EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
-          color: appColors.primaryLight,
+          color: utils.primaryLight,
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: Row(
             children: [
               Container(
-                child: Icon(Icons.check_circle, color: appColors.primaryDark),
+                child: Icon(Icons.check_circle, color: utils.primaryDark),
               ),
               Text(
                 ' Scores',
-                style: TextStyle(fontSize: 25, color: appColors.primaryDark, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 25, color: utils.primaryDark, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -392,18 +492,18 @@ class WineDetailsScreen extends StatelessWidget {
           margin: EdgeInsets.only(top: 15),
           padding: EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color: appColors.primaryLight,
+            color: utils.primaryLight,
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: Row(
               children: [
                 Container(
-                  child: Icon(Icons.calendar_month, color: appColors.primaryDark),
+                  child: Icon(Icons.calendar_month, color: utils.primaryDark),
                 ),
                 Text(
                   ' Vintage(s)',
-                  style: TextStyle(fontSize: 25, color: appColors.primaryDark, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 25, color: utils.primaryDark, fontWeight: FontWeight.bold),
                 ),
               ],
             ),

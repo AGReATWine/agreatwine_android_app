@@ -38,16 +38,9 @@ class _SearchScreenState extends State<SearchScreen> {
           _sortByRS = sortByRS;
           _sortByQP = sortByQP;
           _sortAscending = sortAscending;
-          _searchResults = List.from(_searchResults)..sort((a, b) {
-            int rsComparison =
-                (_sortAscending ? b['RS'] ?? 0 : a['RS'] ?? 0).compareTo(
-                    _sortAscending ? a['RS'] ?? 0 : b['RS'] ?? 0);
-            if (rsComparison != 0) {
-              return rsComparison;
-            } else {
-              return (a['RANK'] ?? 0).compareTo(b['RANK'] ?? 0);
-            }
-          });
+           _searchResults = List.from(_searchResults)..sort((a, b) => sortByRS
+              ? (b['RS'] ?? 0).compareTo(a['RS'] ?? 0)
+              : (a['RS'] ?? 0).compareTo(b['RS'] ?? 0));
         });
       },
       onPressedQP: (sortByRS, sortByQP, sortAscending) {
@@ -100,7 +93,7 @@ Widget build(BuildContext context) {
                 bottom: 0,
                 right: 15,
                 child: IconButton(
-                  icon: Icon(Icons.search, color: Colors.blue),
+                  icon: Icon(Icons.search),
                   onPressed: () async {
                     String query = _searchController.text;
                     _searchResults = await _search(query);
@@ -134,7 +127,7 @@ Widget build(BuildContext context) {
 
   Future<List<Map<String, dynamic>>> _search(String query) async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'allwines5.db');
+    final path = join(dbPath, 'allwines8.db');
     final database = await openDatabase(path);
 
     final results = await database.rawQuery(

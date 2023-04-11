@@ -16,7 +16,7 @@ dependencies:
   path_provider:
   flutter_icons: ^1.1.0
   scrollable_positioned_list:
-  charts_flutter:
+  syncfusion_flutter_charts: ^21.1.38
 
 dev_dependencies:
   flutter_test:
@@ -26,5 +26,5 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/allwines5.db
+    - assets/allwines8.db
     - assets/locale/

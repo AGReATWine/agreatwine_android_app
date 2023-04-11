@@ -20,24 +20,40 @@ void main() async {
   runApp(Agreatwine());
 }
 
+
+
 Future<void> copyDatabase() async {
   final dbPath = await getDatabasesPath();
-  final path = join(dbPath, 'allwines5.db');
+  final path = join(dbPath, 'allwines8.db');
 
   final fileExists = await databaseExists(path);
   if (!fileExists) {
-    final data = await rootBundle.load('assets/allwines5.db');
+    final data = await rootBundle.load('assets/allwines8.db');
     final bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
     await File(path).writeAsBytes(bytes);
   }
 }
 
-class AppColors {
-  Color primaryLight = Color(0xFFDCEDC8);
+class Utils {
+  Color primaryLight = Colors.red.shade800;
   Color primaryDark = Color(0xFF689F38);
+  Color euroSymbol = Color(0xFF3E9C35);
+  Color iconsColor = Colors.red.shade200;
+
+  static Color getScoreColor(double score) {
+    if (score > 90) {
+      return Colors.blue;
+    } else if (score >= 75 && score <= 90) {
+      return Colors.green;
+    } else if (score >= 26 && score <= 74) {
+      return Colors.yellow;
+    } else {
+      return Colors.red;
+    }
+  }
 }
 
-final appColors = AppColors();
+final utils = Utils();
 
 class Agreatwine extends StatelessWidget {
   @override
@@ -54,7 +70,13 @@ class Agreatwine extends StatelessWidget {
         const Locale('es', ''),
         const Locale('fr', ''),
       ],
-      title: 'SQLite Search Demo',
+      title: 'AGReATWine',
+      theme: ThemeData(
+        colorScheme: ColorScheme.light(
+          primary: utils.primaryLight
+        ),
+        useMaterial3: true,
+      ),
       home: HomeScreen(),
     );
   }
