@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'main.dart';
 import 'search_screen.dart';
-import 'appellation.dart';
+import 'appellation_docg.dart';
+import 'appellation_doc.dart';
+import 'appellation_second.dart';
 
 class AGreatDrawer extends StatelessWidget {
   const AGreatDrawer({Key? key}) : super(key: key);
@@ -19,11 +21,29 @@ class AGreatDrawer extends StatelessWidget {
           ),
         ),
         ListTile(
-          title: Text('Appellations'),
+          title: Text('DOCG Appellations'),
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => TestScreen()),
+              MaterialPageRoute(builder: (context) => DocgScreen()),
+              );
+          },
+        ),
+        ListTile(
+          title: Text('DOC Appellations'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => DocScreen()),
+              );
+          },
+        ),
+        ListTile(
+          title: Text('2nd Level Comparisons'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SlevelScreen()),
               );
           },
         ),

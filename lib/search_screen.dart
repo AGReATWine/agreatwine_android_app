@@ -127,7 +127,7 @@ Widget build(BuildContext context) {
 
   Future<List<Map<String, dynamic>>> _search(String query) async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'allwines8.db');
+    final path = join(dbPath, 'allwines9.db');
     final database = await openDatabase(path);
 
     final results = await database.rawQuery(

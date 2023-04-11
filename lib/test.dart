@@ -3,7 +3,7 @@ import 'navigation.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'main.dart';
-import 'appellation.dart';
+import 'appellation_docg.dart';
 import 'winery.dart';
 import 'dart:math' as math;
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -26,7 +26,7 @@ class WineDetailsScreen extends StatelessWidget {
 
   Future<List<Map<String, dynamic>>> _getWineDetails(String fullName, String wineryName) async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'allwines8.db');
+    final path = join(dbPath, 'allwines9.db');
     final database = await openDatabase(path);
 
     final results = await database.rawQuery(
@@ -340,7 +340,7 @@ class WineDetailsScreen extends StatelessWidget {
 
   Future<int> _getRank(String appellationName) async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'allwines8.db');
+    final path = join(dbPath, 'allwines9.db');
     final database = await openDatabase(path);
 
     final results = await database.rawQuery(
