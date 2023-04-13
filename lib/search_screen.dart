@@ -110,27 +110,13 @@ Widget build(BuildContext context) {
     ),
     bottomNavigationBar: AGreatBottomNavigationBarH(
       currentIndex: _currentIndex,
-      items: [
-        BottomNavigationBarItem(
-          label: translations.home,
-          icon: Icon(Icons.home),
-        ),
-        BottomNavigationBarItem(
-          label: translations.list,
-          icon: Icon(Icons.list),
-        ),
-        BottomNavigationBarItem(
-          label: translations.search,
-          icon: Icon(Icons.search),
-        ),
-      ],
     ),
   );
 }
 
   Future<List<Map<String, dynamic>>> _search(String query) async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'allwines9.db');
+    final path = join(dbPath, 'allwines10.db');
     final database = await openDatabase(path);
 
     final results = await database.rawQuery(

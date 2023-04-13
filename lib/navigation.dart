@@ -81,6 +81,7 @@ const AGreatBottomNavigationBar({Key? key}) : super(key: key);
         ],
       ),
       child: BottomNavigationBar(
+          selectedItemColor: Colors.grey.shade500, //force the color of both icon and label
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -91,7 +92,7 @@ const AGreatBottomNavigationBar({Key? key}) : super(key: key);
             label: 'Appellations',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
+            icon: Icon(Icons.manage_search),
             label: 'Search',
           ),
         ],
@@ -124,9 +125,8 @@ const AGreatBottomNavigationBar({Key? key}) : super(key: key);
 
 class AGreatBottomNavigationBarH extends StatelessWidget {
   final int currentIndex;
-  final List<BottomNavigationBarItem> items;
   
-  const AGreatBottomNavigationBarH({Key? key, required this.currentIndex, required this.items}) : super(key: key);
+  const AGreatBottomNavigationBarH({Key? key, required this.currentIndex}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -142,7 +142,20 @@ class AGreatBottomNavigationBarH extends StatelessWidget {
       ),
       child: BottomNavigationBar(
         currentIndex: currentIndex,
-        items: items,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Appellations',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.manage_search),
+            label: 'Search',
+          )
+        ],
         onTap: (int index) {
           switch (index) {
             case 0:

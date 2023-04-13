@@ -8,11 +8,12 @@ import 'main.dart';
 import 'navigation.dart';
 import 'search_sort_buttons.dart';
 import 'single_wine_tile.dart';
+import 'comparisons_screen.dart';
 
 
 Future<List<Map<String, dynamic>>> searchWines() async {
   var databasesPath = await getDatabasesPath();
-  String path = join(databasesPath, 'allwines9.db');
+  String path = join(databasesPath, 'allwines10.db');
   
   Database database = await openDatabase(path);
   List<Map<String, dynamic>> results = await database.rawQuery(
@@ -21,6 +22,12 @@ Future<List<Map<String, dynamic>>> searchWines() async {
   await database.close();
   return results;
 }
+
+int _currentIndex = 1;
+int _docIndex = 0;
+int _docgIndex = 0;  
+int _slevelIndex = 0;
+int _tlevelIndex = 1;
 
 class TlevelScreen extends StatefulWidget {
   @override
@@ -47,34 +54,41 @@ class _TlevelScreenState extends State<TlevelScreen> {
       appBar: AppBar(
         title: Text('AGReaTWine'),
       ),
-      body: ListView.builder(
-        itemCount: wines.length,
-        itemBuilder: (context, index) {
-          final wine = wines[index];
-          return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EntriesScreen(
-                    tlc: wine['TLC'],
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: wines.length,
+              itemBuilder: (context, index) {
+                final wine = wines[index];
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EntriesScreen(
+                          tlc: wine['TLC'],
+                        ),
+                      ),
+                    );
+                  },
+                  child: ListTile(
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(wine['TLC']),
+                        Text('${wine['count']}'),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
-            child: ListTile(
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(wine['TLC']),
-                  Text('${wine['count']}'),
-                ],
-              ),
+                );
+              },
             ),
-          );
-        },
+          ),
+          ComparisonsScreen(docIndex: _docIndex, docgIndex: _docgIndex, slevelIndex: _slevelIndex, tlevelIndex: _tlevelIndex)
+        ],
       ),
-      bottomNavigationBar: AGreatBottomNavigationBar(),
+      bottomNavigationBar: AGreatBottomNavigationBarH( currentIndex: _currentIndex),
     );
   }
 }
@@ -153,7 +167,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
 
   Future<List<Map<String, dynamic>>> searchEntries() async {
     var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, 'allwines9.db');
+    String path = join(databasesPath, 'allwines10.db');
 
     Database database = await openDatabase(path);
     List<Map<String, dynamic>> results = await database.rawQuery(
@@ -273,7 +287,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: AGreatBottomNavigationBar(),
+      bottomNavigationBar: AGreatBottomNavigationBarH( currentIndex: _currentIndex),
     );
   }
 }
@@ -312,6 +326,7 @@ class GroupingsWidget extends StatelessWidget {
       },
       child: Container(
         height: 40,
+        color: utils.primaryLight,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -322,29 +337,40 @@ class GroupingsWidget extends StatelessWidget {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16.0,
+                  color: Colors.white
                 ),
               ),
             ),
             IconButton(
-              icon: Icon(Icons.menu),
+              icon: Icon(Icons.menu_open, color: Colors.white),
               onPressed: () {
                 showModalBottomSheet(
                   context: context,
                   builder: (context) {
                     return Container(
-                      height: 200,
+                      height: 150,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(topRight: Radius.circular(15.0),topLeft: Radius.circular(15.0)),
+                        color: utils.primaryLight,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.shade100,
+                            spreadRadius: 1,
+                            blurRadius: 15,
+                            offset: Offset(0, -1), // changes position of shadow
+                          ),
+                        ],
+                      ),
                       child: ListView.builder(
                         itemCount: groupTitles.length,
                         itemBuilder: (context, index) {
                           final item = groupTitles[index];
-                          return Center(
-                            child: ListTile(
-                              title: Text(item),
-                              onTap: () {
-                                Navigator.pop(context);
-                                scrollToGroup(item); // call to function to scroll to group
-                              },
-                            ),
+                          return ListTile(
+                            title: Center(child: Text(item, style: TextStyle(fontSize: 18, color: Colors.white))),
+                            onTap: () {
+                              Navigator.pop(context);
+                              scrollToGroup(item); // call to function to scroll to group
+                            },
                           );
                         },
                       ),

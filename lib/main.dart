@@ -24,11 +24,11 @@ void main() async {
 
 Future<void> copyDatabase() async {
   final dbPath = await getDatabasesPath();
-  final path = join(dbPath, 'allwines9.db');
+  final path = join(dbPath, 'allwines10.db');
 
   final fileExists = await databaseExists(path);
   if (!fileExists) {
-    final data = await rootBundle.load('assets/allwines9.db');
+    final data = await rootBundle.load('assets/allwines10.db');
     final bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
     await File(path).writeAsBytes(bytes);
   }
@@ -109,20 +109,6 @@ class _HomeScreen extends State<HomeScreen> {
       ),
       bottomNavigationBar: AGreatBottomNavigationBarH(
         currentIndex: _currentIndex,
-        items: [
-          BottomNavigationBarItem(
-            label: translations.home,
-            icon: Icon(Icons.home),
-          ),
-          BottomNavigationBarItem(
-            label: translations.list,
-            icon: Icon(Icons.list),
-          ),
-          BottomNavigationBarItem(
-            label: translations.search,
-            icon: Icon(Icons.search),
-          ),
-        ],
       ),
     );
   }
