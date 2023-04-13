@@ -39,16 +39,20 @@ class Utils {
   Color primaryDark = Color(0xFF689F38);
   Color euroSymbol = Color(0xFF3E9C35);
   Color iconsColor = Colors.red.shade200;
+  Color barYellow = Color(0xFFFEBD09);
+  Color barRed = Color(0xFFF44336);
+  Color barBlue = Color(0xFF1976D2);
+  Color barGreen = Color(0xFF4CAF50);
 
   static Color getScoreColor(double score) {
     if (score > 90) {
-      return Colors.blue;
+      return utils.barBlue;
     } else if (score >= 75 && score <= 90) {
-      return Colors.green;
+      return utils.barGreen;
     } else if (score >= 26 && score <= 74) {
-      return Colors.yellow;
+      return utils.barYellow;
     } else {
-      return Colors.red;
+      return utils.barRed;
     }
   }
 }
@@ -98,7 +102,6 @@ class _HomeScreen extends State<HomeScreen> {
       appBar: AppBar(
         title: Text(translations.appTitle),
       ),
-      drawer: const AGreatDrawer(),
       body: Center(
         child: FlutterLogo(
           size: 200,
@@ -110,6 +113,10 @@ class _HomeScreen extends State<HomeScreen> {
           BottomNavigationBarItem(
             label: translations.home,
             icon: Icon(Icons.home),
+          ),
+          BottomNavigationBarItem(
+            label: translations.list,
+            icon: Icon(Icons.list),
           ),
           BottomNavigationBarItem(
             label: translations.search,

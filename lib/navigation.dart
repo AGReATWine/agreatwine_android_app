@@ -4,54 +4,65 @@ import 'search_screen.dart';
 import 'appellation_docg.dart';
 import 'appellation_doc.dart';
 import 'appellation_second.dart';
+import 'appellation_third.dart';
+import 'comparisons_screen.dart';
 
-class AGreatDrawer extends StatelessWidget {
-  const AGreatDrawer({Key? key}) : super(key: key);
+// class AGreatDrawer extends StatelessWidget {
+//   const AGreatDrawer({Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-    child: ListView(
-      padding: EdgeInsets.zero,
-      children: [
-        Container(
-          height: 118,
-          child: DrawerHeader(
-            child: Text('AGReaTWine'),
-          ),
-        ),
-        ListTile(
-          title: Text('DOCG Appellations'),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => DocgScreen()),
-              );
-          },
-        ),
-        ListTile(
-          title: Text('DOC Appellations'),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => DocScreen()),
-              );
-          },
-        ),
-        ListTile(
-          title: Text('2nd Level Comparisons'),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SlevelScreen()),
-              );
-          },
-        ),
-      ],
-    ),
-  );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Drawer(
+//     child: ListView(
+//       padding: EdgeInsets.zero,
+//       children: [
+//         Container(
+//           height: 118,
+//           child: DrawerHeader(
+//             child: Text('AGReaTWine'),
+//           ),
+//         ),
+//         ListTile(
+//           title: Text('DOCG Appellations'),
+//           onTap: () {
+//             Navigator.push(
+//               context,
+//               MaterialPageRoute(builder: (context) => DocgScreen()),
+//               );
+//           },
+//         ),
+//         ListTile(
+//           title: Text('DOC Appellations'),
+//           onTap: () {
+//             Navigator.push(
+//               context,
+//               MaterialPageRoute(builder: (context) => DocScreen()),
+//               );
+//           },
+//         ),
+//         ListTile(
+//           title: Text('2nd Level Comparisons'),
+//           onTap: () {
+//             Navigator.push(
+//               context,
+//               MaterialPageRoute(builder: (context) => DocgScreen()),
+//               );
+//           },
+//         ),
+//         ListTile(
+//           title: Text('3rd Level Comparisons'),
+//           onTap: () {
+//             Navigator.push(
+//               context,
+//               MaterialPageRoute(builder: (context) => TlevelScreen()),
+//               );
+//           },
+//         ),
+//       ],
+//     ),
+//   );
+//   }
+// }
 
 class AGreatBottomNavigationBar extends StatelessWidget {  
 const AGreatBottomNavigationBar({Key? key}) : super(key: key);
@@ -76,6 +87,10 @@ const AGreatBottomNavigationBar({Key? key}) : super(key: key);
             label: 'Home',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Appellations',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.search),
             label: 'Search',
           ),
@@ -89,6 +104,12 @@ const AGreatBottomNavigationBar({Key? key}) : super(key: key);
               );              
               break;
             case 1:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DocgScreen()),
+              );
+              break;
+            case 2:
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => SearchScreen()),
@@ -130,7 +151,13 @@ class AGreatBottomNavigationBarH extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => HomeScreen()),
               );
               break;
-            case 1:
+              case 1:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DocgScreen()),
+              );
+              break;
+              case 2:
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => SearchScreen()),

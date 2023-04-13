@@ -36,7 +36,9 @@ class _SearchResultsState extends State<SearchResults> {
         itemCount: filteredResults.length,
         itemBuilder: (BuildContext context, int index) {
           final result = filteredResults[index];
-          return SingleWineTile(result: result);
+          final isSecondLevel = false;
+          final isThirdLevel = false;
+          return SingleWineTile(result: result, isSecondLevel: isSecondLevel, isThirdLevel: isThirdLevel);
         },
       );
     }

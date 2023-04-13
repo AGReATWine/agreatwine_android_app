@@ -104,7 +104,9 @@ class _WineryEntriesScreenState extends State<WineryEntriesScreen> {
               itemCount: entries.length,
               itemBuilder: (context, index) {
                 final entry = entries[index];
-                return SingleWineTile(result: entry);
+                final isSecondLevel = false;
+                final isThirdLevel = false;
+                return SingleWineTile(result: entry, isSecondLevel: isSecondLevel, isThirdLevel: isThirdLevel);
               },
             ),
           ),

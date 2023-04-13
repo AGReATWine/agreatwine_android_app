@@ -16,18 +16,18 @@ Future<List<Map<String, dynamic>>> searchWines() async {
   
   Database database = await openDatabase(path);
   List<Map<String, dynamic>> results = await database.rawQuery(
-    "SELECT AppellationName, COUNT(*) as count FROM allwines WHERE AppellationLevel = 'DOC' AND Entry = 1 GROUP BY AppellationName",
+    "SELECT TLC, COUNT(*) as count FROM allwines WHERE TLC IS NOT NULL AND Entry = 1 GROUP BY tlc",
   );
   await database.close();
   return results;
 }
 
-class DocScreen extends StatefulWidget {
+class TlevelScreen extends StatefulWidget {
   @override
-  _DocScreenState createState() => _DocScreenState();
+  _TlevelScreenState createState() => _TlevelScreenState();
 }
 
-class _DocScreenState extends State<DocScreen> {
+class _TlevelScreenState extends State<TlevelScreen> {
   List<Map<String, dynamic>> wines = [];
 
     @override
@@ -57,7 +57,7 @@ class _DocScreenState extends State<DocScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => EntriesScreen(
-                    appellationName: wine['AppellationName'],
+                    tlc: wine['TLC'],
                   ),
                 ),
               );
@@ -66,7 +66,7 @@ class _DocScreenState extends State<DocScreen> {
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(wine['AppellationName']),
+                  Text(wine['TLC']),
                   Text('${wine['count']}'),
                 ],
               ),
@@ -80,9 +80,9 @@ class _DocScreenState extends State<DocScreen> {
 }
 
 class EntriesScreen extends StatefulWidget {
-  final String appellationName;
+  final String tlc;
 
-  EntriesScreen({required this.appellationName});
+  EntriesScreen({required this.tlc});
 
   @override
   _EntriesScreenState createState() => _EntriesScreenState();
@@ -124,13 +124,13 @@ class _EntriesScreenState extends State<EntriesScreen> {
     });
     wineTypeMap.forEach((wineType, entries) {
       if (entries.isNotEmpty) {
-        // sort entries by RS value
+        // sort entries by RS3 value
         entries.sort((a, b) {
           bool sortDescending = _sortDescendingMap[wineType]!; // get sorting value from map
           if (sortDescending) {
-            return b['RS'].compareTo(a['RS']);
+            return b['RS3'].compareTo(a['RS3']);
           } else {
-            return a['RS'].compareTo(b['RS']);
+            return a['RS3'].compareTo(b['RS3']);
           }
         });
         groupedEntries.add({
@@ -157,8 +157,8 @@ class _EntriesScreenState extends State<EntriesScreen> {
 
     Database database = await openDatabase(path);
     List<Map<String, dynamic>> results = await database.rawQuery(
-      "SELECT * FROM allwines WHERE AppellationName = ? AND Entry = 1 AND FullName LIKE ?",
-      [widget.appellationName, '%${_searchController.text}%'], // filter by the search text field
+      "SELECT * FROM allwines WHERE TLC = ? AND Entry = 1 AND FullName LIKE ?",
+      [widget.tlc, '%${_searchController.text}%'], // filter by the search text field
     );
     await database.close();
     return results;
@@ -182,7 +182,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("${widget.appellationName} Appellation Wine List"),
+        title: Text("${widget.tlc} Appellation Wine List"),
       ),
       body: Column(
         children: [
@@ -198,9 +198,9 @@ class _EntriesScreenState extends State<EntriesScreen> {
                 // sort entries by RS value
                 entries.sort((a, b) {
                   if (sortDescending) {
-                    return b['RS'].compareTo(a['RS']);
+                    return b['RS3'].compareTo(a['RS3']);
                   } else {
-                    return a['RS'].compareTo(b['RS']);
+                    return a['RS3'].compareTo(b['RS3']);
                   }
                 });
 
@@ -225,7 +225,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: <Widget>[
                                   Text(
-                                    'RS',
+                                    'RS³',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 16,
@@ -258,9 +258,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
                             itemCount: entries.length,
                             itemBuilder: (context, index) {
                               final entry = entries[index];
-                              final isSecondLevel = false;
-                              final isThirdLevel = false;
-                              return SingleWineTile(result: entry, isSecondLevel: isSecondLevel, isThirdLevel: isThirdLevel);
+                              return SingleWineTile(result: entry, isSecondLevel: false, isThirdLevel: true);
                             },
                           ),
                         ],
@@ -296,23 +294,18 @@ class GroupingsWidget extends StatelessWidget {
         showModalBottomSheet(
           context: context,
           builder: (context) {
-            return Container(
-              height: 200,
-              child: ListView.builder(
-                itemCount: groupTitles.length,
-                itemBuilder: (context, index) {
-                  final item = groupTitles[index];
-                  return Center(
-                    child: ListTile(
-                      title: Text(item),
-                      onTap: () {
-                        Navigator.pop(context);
-                        scrollToGroup(item); // call to function to scroll to group
-                      },
-                    ),
-                  );
-                },
-              ),
+            return ListView.builder(
+              itemCount: groupTitles.length,
+              itemBuilder: (context, index) {
+                final item = groupTitles[index];
+                return ListTile(
+                  title: Text(item),
+                  onTap: () {
+                    Navigator.pop(context);
+                    scrollToGroup(item); // call to function to scroll to group
+                  },
+                );
+              },
             );
           },
         );
@@ -338,18 +331,23 @@ class GroupingsWidget extends StatelessWidget {
                 showModalBottomSheet(
                   context: context,
                   builder: (context) {
-                    return ListView.builder(
-                      itemCount: groupTitles.length,
-                      itemBuilder: (context, index) {
-                        final item = groupTitles[index];
-                        return ListTile(
-                          title: Text(item),
-                          onTap: () {
-                            Navigator.pop(context);
-                            scrollToGroup(item); // call to function to scroll to group
-                          },
-                        );
-                      },
+                    return Container(
+                      height: 200,
+                      child: ListView.builder(
+                        itemCount: groupTitles.length,
+                        itemBuilder: (context, index) {
+                          final item = groupTitles[index];
+                          return Center(
+                            child: ListTile(
+                              title: Text(item),
+                              onTap: () {
+                                Navigator.pop(context);
+                                scrollToGroup(item); // call to function to scroll to group
+                              },
+                            ),
+                          );
+                        },
+                      ),
                     );
                   },
                 );

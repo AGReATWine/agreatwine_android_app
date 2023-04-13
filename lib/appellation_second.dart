@@ -30,7 +30,7 @@ class SlevelScreen extends StatefulWidget {
 class _SlevelScreenState extends State<SlevelScreen> {
   List<Map<String, dynamic>> wines = [];
 
-    @override
+  @override
   void initState() {
     super.initState();
     searchWines().then((results) {
@@ -40,14 +40,12 @@ class _SlevelScreenState extends State<SlevelScreen> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('AGReaTWine'),
       ),
-      drawer: const AGreatDrawer(),
       body: ListView.builder(
         itemCount: wines.length,
         itemBuilder: (context, index) {
@@ -125,13 +123,13 @@ class _EntriesScreenState extends State<EntriesScreen> {
     });
     wineTypeMap.forEach((wineType, entries) {
       if (entries.isNotEmpty) {
-        // sort entries by RS value
+        // sort entries by RS2 value
         entries.sort((a, b) {
           bool sortDescending = _sortDescendingMap[wineType]!; // get sorting value from map
           if (sortDescending) {
-            return b['RS'].compareTo(a['RS']);
+            return b['RS2'].compareTo(a['RS2']);
           } else {
-            return a['RS'].compareTo(b['RS']);
+            return a['RS2'].compareTo(b['RS2']);
           }
         });
         groupedEntries.add({
@@ -199,9 +197,9 @@ class _EntriesScreenState extends State<EntriesScreen> {
                 // sort entries by RS value
                 entries.sort((a, b) {
                   if (sortDescending) {
-                    return b['RS'].compareTo(a['RS']);
+                    return b['RS2'].compareTo(a['RS2']);
                   } else {
-                    return a['RS'].compareTo(b['RS']);
+                    return a['RS2'].compareTo(b['RS2']);
                   }
                 });
 
@@ -226,7 +224,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: <Widget>[
                                   Text(
-                                    'RS',
+                                    'RS2',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 16,
@@ -259,7 +257,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
                             itemCount: entries.length,
                             itemBuilder: (context, index) {
                               final entry = entries[index];
-                              return SingleWineTile(result: entry);
+                              return SingleWineTile(result: entry, isSecondLevel: true, isThirdLevel: false);
                             },
                           ),
                         ],
@@ -333,17 +331,19 @@ class GroupingsWidget extends StatelessWidget {
                   context: context,
                   builder: (context) {
                     return Container(
-                      height: 150,
+                      height: 200,
                       child: ListView.builder(
                         itemCount: groupTitles.length,
                         itemBuilder: (context, index) {
                           final item = groupTitles[index];
-                          return ListTile(
-                            title: Text(item),
-                            onTap: () {
-                              Navigator.pop(context);
-                              scrollToGroup(item); // call to function to scroll to group
-                            },
+                          return Center(
+                            child: ListTile(
+                              title: Text(item),
+                              onTap: () {
+                                Navigator.pop(context);
+                                scrollToGroup(item); // call to function to scroll to group
+                              },
+                            ),
                           );
                         },
                       ),

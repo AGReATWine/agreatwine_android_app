@@ -22,7 +22,7 @@ class WineDetailsScreen extends StatelessWidget {
       final database = await openDatabase(path);
 
       final results = await database.rawQuery(
-        'SELECT AppellationName, RatingYear, Vintage, EvaluationAvg, ScoreAvg, Tasting, Grapes, AgingMonths, AgingType, Price FROM allwines WHERE FullName = ? AND WineryName = ? AND Entry = ?',
+        'SELECT AppellationName, RatingYear, Vintage, EvaluationAvg, ScoreAvg, Tasting, Grapes, AgingMonths, AgingType, SLC, TLC, Price FROM allwines WHERE FullName = ? AND WineryName = ? AND Entry = ?',
         [fullName, wineryName, 2],
       );
 
@@ -83,6 +83,8 @@ class WineDetailsScreen extends StatelessWidget {
             final rank = details.map((detail) => detail['RANK']).toList();
             final price = details.map((detail) => detail['Price']).toList();
             final pairing = details.map((detail) => detail['Pairing']).toList();
+            final slc = details.map((detail) => detail['SLC']).toList();
+            final tlc = details.map((detail) => detail['TLC']).toList();
 
             final xAxisYears = List.generate(7, (index) => (2017 + index));
             final xMin = xAxisYears.reduce((value, element) => value < element ? value : element);
@@ -273,6 +275,60 @@ class WineDetailsScreen extends StatelessWidget {
                               MaterialPageRoute(
                                   builder: (context) => EntriesScreen(
                                   appellationName: wineDetails['appellationName'],
+                                ),
+                              ),
+                            );
+                          },
+                          child: Icon(
+                            Icons.link,
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+                if (wineDetails['slc'] != null)
+                TableRow(
+                  children: [
+                    Text('Vineyard Comparison'),
+                    Row(
+                      children: [
+                        Text('${wineDetails['slc']} ', softWrap: true),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EntriesScreen(
+                                  appellationName: wineDetails['slc'],
+                                ),
+                              ),
+                            );
+                          },
+                          child: Icon(
+                            Icons.link,
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+                if (wineDetails['tlc'] != null)
+                TableRow(
+                  children: [
+                    Text('Regional Comparison'),
+                    Row(
+                      children: [
+                        Text('${wineDetails['tlc']} ', softWrap: true),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EntriesScreen(
+                                  appellationName: wineDetails['tlc'],
                                 ),
                               ),
                             );

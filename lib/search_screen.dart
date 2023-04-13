@@ -26,7 +26,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   bool _showSortButtons = false;
   bool _sortAscending = false; // default sort order is ascending
-  int _currentIndex = 1;
+  int _currentIndex = 2;
 
   Widget _buildSortButtons() {
     return SortButtons(
@@ -63,7 +63,6 @@ Widget build(BuildContext context) {
     appBar: AppBar(
       title: Text('AGReaTWine'),
     ),
-    drawer: const AGreatDrawer(),
     body: Column(
       children: [
         Expanded(
@@ -115,6 +114,10 @@ Widget build(BuildContext context) {
         BottomNavigationBarItem(
           label: translations.home,
           icon: Icon(Icons.home),
+        ),
+        BottomNavigationBarItem(
+          label: translations.list,
+          icon: Icon(Icons.list),
         ),
         BottomNavigationBarItem(
           label: translations.search,

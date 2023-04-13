@@ -21,6 +21,10 @@ class Translations {
     return Intl.message('Home', name: 'home');
   }
 
+  String get list {
+    return Intl.message('Appellations', name: 'appellations');
+  }
+
   String get search {
     return Intl.message('Search', name: 'search');
   }
