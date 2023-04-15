@@ -4,15 +4,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'details_screen.dart';
 import 'navigation.dart';
-import 'search_results.dart';
-import 'search_screen.dart';
+import 'cellar_wine_details.dart';
+
 import 'translations.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

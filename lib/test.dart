@@ -68,7 +68,7 @@
 //                     alignment: Alignment.centerLeft,
 //                     child: Padding(
 //                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-//                       child: Text('Vineyard Comparisons', style: TextStyle(fontSize: 24, fontWeight:FontWeight.bold, color: Colors.white)),
+//                       child: Text('Varieties Comparisons', style: TextStyle(fontSize: 24, fontWeight:FontWeight.bold, color: Colors.white)),
 //                     ),
 //                 )), 
 //                 SizedBox(height:MediaQuery.of(context).size.height * 0.0150,),

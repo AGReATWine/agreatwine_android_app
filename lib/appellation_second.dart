@@ -65,7 +65,7 @@ class _SlevelScreenState extends State<SlevelScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => EntriesScreen(
+                        builder: (context) => EntriesSecondScreen(
                           slc: wine['SLC'],
                         ),
                       ),
@@ -92,16 +92,16 @@ class _SlevelScreenState extends State<SlevelScreen> {
   }
 }
 
-class EntriesScreen extends StatefulWidget {
+class EntriesSecondScreen extends StatefulWidget {
   final String slc;
 
-  EntriesScreen({required this.slc});
+  EntriesSecondScreen({required this.slc});
 
   @override
-  _EntriesScreenState createState() => _EntriesScreenState();
+  _EntriesSecondScreenState createState() => _EntriesSecondScreenState();
 }
 
-class _EntriesScreenState extends State<EntriesScreen> {
+class _EntriesSecondScreenState extends State<EntriesSecondScreen> {
   List<Map<String, dynamic>> entries = [];
   List<Map<String, dynamic>> groupedEntries = [];
   TextEditingController _searchController = TextEditingController();
@@ -220,50 +220,54 @@ class _EntriesScreenState extends State<EntriesScreen> {
                 return entries.isNotEmpty
                     ? Column(
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 16.0, top: 16),
-                                child: Text(
-                                  group['WineType'],
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20.0,
-                                  ),
-                                ),
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: <Widget>[
-                                  Text(
-                                    'RS2',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.arrow_downward),
-                                    onPressed: () {
-                                      setState(() {
-                                        _sortDescendingMap[group['WineType']] = false; // set sorting value to false
-                                      });
-                                    },
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.arrow_upward),
-                                    onPressed: () {
-                                      setState(() {
-                                        _sortDescendingMap[group['WineType']] = true; // set sorting value to true
-                                      });
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ],
+                          Container(	
+                            color: utils.primaryLight,	
+                            child: Row(	
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,	
+                              children: [	
+                                Padding(	
+                                  padding: const EdgeInsets.only(	
+                                  left: 8.0, top: 0),	
+                                  child: Text(	
+                                    group['WineType'],	
+                                    style: TextStyle(	
+                                      fontWeight: FontWeight.bold,	
+                                      fontSize: 20.0,	
+                                      color: Colors.white,	
+                                    ),	
+                                  ),	
+                                ),	
+                                Row(	
+                                  mainAxisAlignment: MainAxisAlignment.end,	
+                                  children: <Widget>[	
+                                    Text(	
+                                      'RS',	
+                                      style: TextStyle(	
+                                        fontSize: 16,	
+                                        fontWeight: FontWeight.w500,	
+                                        color: Colors.white	
+                                      ),	
+                                    ),	
+                                    IconButton(	
+                                      icon: Icon(Icons.arrow_downward, color: Colors.white),	
+                                      onPressed: () {	
+                                        setState(() {	
+                                          _sortDescendingMap[group['WineType']] = false; // set sorting value to false	
+                                        });	
+                                      },	
+                                    ),	
+                                    IconButton(	
+                                      icon: Icon(Icons.arrow_upward, color: Colors.white),	
+                                      onPressed: () {	
+                                        setState(() {	
+                                          _sortDescendingMap[group['WineType']] = true; // set sorting value to true	
+                                        });	
+                                      },	
+                                    ),	
+                                  ],	
+                                ),	
+                              ],	
+                            ),	
                           ),
                           ListView.builder(
                             shrinkWrap: true,
@@ -271,7 +275,9 @@ class _EntriesScreenState extends State<EntriesScreen> {
                             itemCount: entries.length,
                             itemBuilder: (context, index) {
                               final entry = entries[index];
-                              return SingleWineTile(result: entry, isSecondLevel: true, isThirdLevel: false);
+                              final isSecondLevel = true;	
+                              final isThirdLevel = false;
+                              return SingleWineTile(result: entry, isSecondLevel: isSecondLevel, isThirdLevel: isThirdLevel);
                             },
                           ),
                         ],
@@ -332,7 +338,7 @@ class GroupingsWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 16.0),
               child: Text(
-                'Appellation wine types',
+                'Wine types',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16.0,

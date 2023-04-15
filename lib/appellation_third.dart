@@ -66,7 +66,7 @@ class _TlevelScreenState extends State<TlevelScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => EntriesScreen(
+                        builder: (context) => EntriesThirdScreen(
                           tlc: wine['TLC'],
                         ),
                       ),
@@ -93,16 +93,16 @@ class _TlevelScreenState extends State<TlevelScreen> {
   }
 }
 
-class EntriesScreen extends StatefulWidget {
+class EntriesThirdScreen extends StatefulWidget {
   final String tlc;
 
-  EntriesScreen({required this.tlc});
+  EntriesThirdScreen({required this.tlc});
 
   @override
-  _EntriesScreenState createState() => _EntriesScreenState();
+  _EntriesThirdScreenState createState() => _EntriesThirdScreenState();
 }
 
-class _EntriesScreenState extends State<EntriesScreen> {
+class _EntriesThirdScreenState extends State<EntriesThirdScreen> {
   List<Map<String, dynamic>> entries = [];
   List<Map<String, dynamic>> groupedEntries = [];
   TextEditingController _searchController = TextEditingController();

@@ -228,6 +228,7 @@ class SingleWineTile extends StatelessWidget {
                   'qprank': result['QPRANK'],
                   'price': result['Price'],
                   'slc': result['SLC'],
+                  'tlc': result['TLC'],
                 };
                 Navigator.push(
                   context,

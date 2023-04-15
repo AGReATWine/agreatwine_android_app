@@ -37,7 +37,7 @@ class _ComparisonsScreenState extends State<ComparisonsScreen> {
   Widget build(BuildContext context) {
     var translations = Translations.of(context);
     return Container(
-      color: Colors.red,
+      color: utils.primaryLight,
       height: 50,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -68,7 +68,7 @@ class _ComparisonsScreenState extends State<ComparisonsScreen> {
           ),
           InkWell(
             onTap: () => Navigator.push(context, routes[2]),
-            child: Text('Vineyard', style: TextStyle(
+            child: Text('Varieties', style: TextStyle(
               fontSize: 20, 
               fontWeight: FontWeight.bold, 
               color: Colors.white,
@@ -80,7 +80,7 @@ class _ComparisonsScreenState extends State<ComparisonsScreen> {
           ),
           InkWell(
             onTap: () => Navigator.push(context, routes[3]),
-            child: Text('DOC', style: TextStyle(
+            child: Text('Regional', style: TextStyle(
               fontSize: 20, 
               fontWeight: FontWeight.bold, 
               color: Colors.white,

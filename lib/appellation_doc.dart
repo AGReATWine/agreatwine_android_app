@@ -68,7 +68,7 @@ class _DocScreenState extends State<DocScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => EntriesScreen(
+                        builder: (context) => EntriesSecondScreen(
                           appellationName: wine['AppellationName'],
                         ),
                       ),
@@ -95,16 +95,16 @@ class _DocScreenState extends State<DocScreen> {
   }
 }
 
-class EntriesScreen extends StatefulWidget {
+class EntriesSecondScreen extends StatefulWidget {
   final String appellationName;
 
-  EntriesScreen({required this.appellationName});
+  EntriesSecondScreen({required this.appellationName});
 
   @override
-  _EntriesScreenState createState() => _EntriesScreenState();
+  _EntriesSecondScreenState createState() => _EntriesSecondScreenState();
 }
 
-class _EntriesScreenState extends State<EntriesScreen> {
+class _EntriesSecondScreenState extends State<EntriesSecondScreen> {
   List<Map<String, dynamic>> entries = [];
   List<Map<String, dynamic>> groupedEntries = [];
   TextEditingController _searchController = TextEditingController();

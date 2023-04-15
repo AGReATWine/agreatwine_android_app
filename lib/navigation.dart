@@ -6,10 +6,10 @@ import 'appellation_doc.dart';
 import 'appellation_second.dart';
 import 'appellation_third.dart';
 import 'comparisons_screen.dart';
+import 'cellar.dart';
 
 // class AGreatDrawer extends StatelessWidget {
 //   const AGreatDrawer({Key? key}) : super(key: key);
-
 //   @override
 //   Widget build(BuildContext context) {
 //     return Drawer(
@@ -81,7 +81,8 @@ const AGreatBottomNavigationBar({Key? key}) : super(key: key);
         ],
       ),
       child: BottomNavigationBar(
-          selectedItemColor: Colors.grey.shade500, //force the color of both icon and label
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: Colors.grey.shade500,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -94,6 +95,10 @@ const AGreatBottomNavigationBar({Key? key}) : super(key: key);
           BottomNavigationBarItem(
             icon: Icon(Icons.manage_search),
             label: 'Search',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shelves),
+            label: 'MyCellar',
           ),
         ],
         onTap: (int index) {
@@ -113,9 +118,15 @@ const AGreatBottomNavigationBar({Key? key}) : super(key: key);
             case 2:
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => SearchScreen()),
+                MaterialPageRoute(builder: (context) => SearchScreen(isComingFromCellarWineDetails: false,)),
               );
               break;
+            case 3:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyCellarScreen()),
+              );
+              break;  
           }
         },
       ),
@@ -141,8 +152,9 @@ class AGreatBottomNavigationBarH extends StatelessWidget {
         // ],
       ),
       child: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         currentIndex: currentIndex,
-        items: const <BottomNavigationBarItem>[
+        items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
@@ -154,7 +166,11 @@ class AGreatBottomNavigationBarH extends StatelessWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.manage_search),
             label: 'Search',
-          )
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shelves),
+            label: 'MyCellar',
+          ),
         ],
         onTap: (int index) {
           switch (index) {
@@ -173,7 +189,13 @@ class AGreatBottomNavigationBarH extends StatelessWidget {
               case 2:
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => SearchScreen()),
+                MaterialPageRoute(builder: (context) => SearchScreen(isComingFromCellarWineDetails: false,)),
+              );
+              break;
+              case 3:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyCellarScreen()),
               );
               break;
           }

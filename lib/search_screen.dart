@@ -13,9 +13,18 @@ import 'search_sort_buttons.dart';
 import 'search_results.dart';
 
 class SearchScreen extends StatefulWidget {
+  final TextEditingController? controller;
+  final bool isComingFromCellarWineDetails; // New parameter
+
+  const SearchScreen({
+    this.controller,
+    required this.isComingFromCellarWineDetails, // Updated constructor
+  });
+
   @override
   _SearchScreenState createState() => _SearchScreenState();
 }
+
 
 class _SearchScreenState extends State<SearchScreen> {
   TextEditingController _searchController = TextEditingController();
@@ -27,6 +36,92 @@ class _SearchScreenState extends State<SearchScreen> {
   bool _showSortButtons = false;
   bool _sortAscending = false; // default sort order is ascending
   int _currentIndex = 2;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.controller != null) {
+      _searchController.text = widget.controller!.text;
+    }
+    debugPrint(widget.isComingFromCellarWineDetails.toString());
+    if (widget.isComingFromCellarWineDetails) { // Check if coming from CellarWineDetails
+      // Programmatically call search button's onPressed callback
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final Function()? onPressed = IconButton(
+          icon: Icon(Icons.search),
+          onPressed: () async {
+            String query = _searchController.text;
+            _searchResults = await _search(query);
+            setState(() {
+              _showSortButtons = true;
+              _hasSearched = true;
+            });
+          },
+        ).onPressed;
+        onPressed?.call();
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    debugPrint('AAA' + _searchController.toString());
+    // TextEditingController _searchController = controller;
+    var translations = Translations.of(context);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('AGReaTWine'),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: SearchResults(
+              searchResults: _searchResults,
+              hasSearched: _hasSearched,
+            ),
+          ),
+          if (_showSortButtons) _buildSortButtons(),
+          Container(
+            padding: EdgeInsets.only(bottom: 15),
+            height: 60,
+            child: Stack(
+              children: [
+                Positioned(
+                  bottom: 0,
+                  left: 15,
+                  right: 10,
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Search for wines, wineries or pairings',
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 15,
+                  child: IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: () async {
+                      String query = _searchController.text;
+                      _searchResults = await _search(query);
+                      setState(() {
+                        _showSortButtons = true;
+                        _hasSearched = true;
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: AGreatBottomNavigationBarH(
+        currentIndex: _currentIndex,
+      ),
+    );
+  }
 
   Widget _buildSortButtons() {
     return SortButtons(
@@ -55,64 +150,6 @@ class _SearchScreenState extends State<SearchScreen> {
       },
     );
   }
-
-  @override
-Widget build(BuildContext context) {
-  var translations = Translations.of(context);
-  return Scaffold(
-    appBar: AppBar(
-      title: Text('AGReaTWine'),
-    ),
-    body: Column(
-      children: [
-        Expanded(
-          child: SearchResults(
-            searchResults: _searchResults,
-            hasSearched: _hasSearched,
-            ),
-        ),
-        if (_showSortButtons) _buildSortButtons(),
-        Container(
-          padding: EdgeInsets.only(bottom: 15),
-          height: 60,
-          child: Stack(
-            children: [
-              Positioned(
-                bottom: 0,
-                left: 15,
-                right: 10,
-                child: TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: 'Search for wines, wineries or pairings',
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                right: 15,
-                child: IconButton(
-                  icon: Icon(Icons.search),
-                  onPressed: () async {
-                    String query = _searchController.text;
-                    _searchResults = await _search(query);
-                    setState(() {
-                      _showSortButtons = true;
-                      _hasSearched = true;
-                    });
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    ),
-    bottomNavigationBar: AGreatBottomNavigationBarH(
-      currentIndex: _currentIndex,
-    ),
-  );
-}
 
   Future<List<Map<String, dynamic>>> _search(String query) async {
     final dbPath = await getDatabasesPath();

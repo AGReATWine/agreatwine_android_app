@@ -4,6 +4,8 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'main.dart';
 import 'appellation_docg.dart';
+import 'appellation_second.dart';
+import 'appellation_third.dart';
 import 'winery.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -292,7 +294,7 @@ class WineDetailsScreen extends StatelessWidget {
                 if (wineDetails['slc'] != null)
                 TableRow(
                   children: [
-                    Text('Vineyard Comparison'),
+                    Text('Varieties²'),
                     Row(
                       children: [
                         Text('${wineDetails['slc']} ', softWrap: true),
@@ -301,8 +303,8 @@ class WineDetailsScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => EntriesScreen(
-                                  appellationName: wineDetails['slc'],
+                                builder: (context) => EntriesSecondScreen(
+                                  slc: wineDetails['slc'],
                                 ),
                               ),
                             );
@@ -319,7 +321,7 @@ class WineDetailsScreen extends StatelessWidget {
                 if (wineDetails['tlc'] != null)
                 TableRow(
                   children: [
-                    Text('Regional Comparison'),
+                    Text('Regional³ Comparison'),
                     Row(
                       children: [
                         Text('${wineDetails['tlc']} ', softWrap: true),
@@ -328,8 +330,8 @@ class WineDetailsScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => EntriesScreen(
-                                  appellationName: wineDetails['tlc'],
+                                builder: (context) => EntriesThirdScreen(
+                                  tlc: wineDetails['tlc'],
                                 ),
                               ),
                             );
@@ -458,7 +460,7 @@ class WineDetailsScreen extends StatelessWidget {
                     if (snapshot.hasData) {
                       return Row(
                         children: [
-                          Text('RS ', style: TextStyle(fontSize: 21)),
+                          Text('RS  ', style: TextStyle(fontSize: 21)),
                           _buildStack(
                             score: wineDetails['rsScore'],
                             color: Utils.getScoreColor(((wineDetails['rsScore'] - wineDetails['rank'] + 1) / wineDetails['rsScore'] * 100)),
@@ -484,42 +486,109 @@ class WineDetailsScreen extends StatelessWidget {
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: Row(
-                children: [
-                  FutureBuilder<int>(
-                    future: _getRank(wineDetails['appellationName']),
-                    builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
-                      if (snapshot.hasData) {
-                        return Row(
-                          children: [
-                            Text('QP ', style: TextStyle(fontSize: 21)),
-                            _buildStack(
-                              score: wineDetails['qpScore'],
-                              color: Utils.getScoreColor(((wineDetails['qpScore'] - wineDetails['qprank'] + 1) / wineDetails['qpScore'] * 100)),
-                              height: 20,
-                              width: 200,
-                              iconColor: Colors.black,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10.0),
-                              child: Icon(Icons.leaderboard, color: utils.iconsColor),
-                            ),
-                            Text(' '),
-                            Text(wineDetails['qprank'].toInt().toString(), style: TextStyle(color: Utils.getScoreColor(((wineDetails['qpScore'] - wineDetails['qprank'] + 1) / wineDetails['qpScore'] * 100)), fontWeight: FontWeight.bold, fontSize: 20)),
-                            Text('/' + snapshot.data.toString())
-                          ],
-                        );
-                      } else if (snapshot.hasError) {
-                        return Text('Error');
-                      } else {
-                        return CircularProgressIndicator();
-                      }
-                    },
-                  ),
-                ],
-              ),
+            if (wineDetails['slc'] != null)
+            Row(
+              children: [
+                FutureBuilder<int>(
+                  future: _getRank(wineDetails['slc']),
+                  builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+                    if (snapshot.hasData) {
+                      return Row(
+                        children: [
+                          Text('RS² ', style: TextStyle(fontSize: 21)),
+                          _buildStack(
+                            score: wineDetails['rs2Score'],
+                            color: Utils.getScoreColor(((wineDetails['rs2Score'] - wineDetails['rank2'] + 1) / wineDetails['rs2Score'] * 100)),
+                            height: 20,
+                            width: 200,
+                            iconColor: Colors.black,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10.0),
+                            child: Icon(Icons.leaderboard, color: utils.iconsColor),
+                          ),
+                          Text(' '),
+                          Text(wineDetails['rank2'].toInt().toString(), style: TextStyle(color: Utils.getScoreColor(((wineDetails['rs2Score'] - wineDetails['rank2'] + 1) / wineDetails['rs2Score'] * 100)), fontWeight: FontWeight.bold, fontSize: 20)),
+                          Text('/' + snapshot.data.toString())
+                        ],
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text('Error');
+                    } else {
+                      return CircularProgressIndicator();
+                    }
+                  },
+                ),
+              ],
+            ),
+            if (wineDetails['tlc'] != null)
+            Row(
+              children: [
+                FutureBuilder<int>(
+                  future: _getRank(wineDetails['tlc']),
+                  builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+                    if (snapshot.hasData) {
+                      return Row(
+                        children: [
+                          Text('RS³ ', style: TextStyle(fontSize: 21)),
+                          _buildStack(
+                            score: wineDetails['rs3Score'],
+                            color: Utils.getScoreColor(((wineDetails['rs3Score'] - wineDetails['rank3'] + 1) / wineDetails['rs3Score'] * 100)),
+                            height: 20,
+                            width: 200,
+                            iconColor: Colors.black,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10.0),
+                            child: Icon(Icons.leaderboard, color: utils.iconsColor),
+                          ),
+                          Text(' '),
+                          Text(wineDetails['rank3'].toInt().toString(), style: TextStyle(color: Utils.getScoreColor(((wineDetails['rs3Score'] - wineDetails['rank3'] + 1) / wineDetails['rs3Score'] * 100)), fontWeight: FontWeight.bold, fontSize: 20)),
+                          Text('/' + snapshot.data.toString())
+                        ],
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text('Error');
+                    } else {
+                      return CircularProgressIndicator();
+                    }
+                  },
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                FutureBuilder<int>(
+                  future: _getRank(wineDetails['appellationName']),
+                  builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+                    if (snapshot.hasData) {
+                      return Row(
+                        children: [
+                          Text('QP  ', style: TextStyle(fontSize: 21)),
+                          _buildStack(
+                            score: wineDetails['qpScore'],
+                            color: Utils.getScoreColor(((wineDetails['qpScore'] - wineDetails['qprank'] + 1) / wineDetails['qpScore'] * 100)),
+                            height: 20,
+                            width: 200,
+                            iconColor: Colors.black,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10.0),
+                            child: Icon(Icons.leaderboard, color: utils.iconsColor),
+                          ),
+                          Text(' '),
+                          Text(wineDetails['qprank'].toInt().toString(), style: TextStyle(color: Utils.getScoreColor(((wineDetails['qpScore'] - wineDetails['qprank'] + 1) / wineDetails['qpScore'] * 100)), fontWeight: FontWeight.bold, fontSize: 20)),
+                          Text('/' + snapshot.data.toString())
+                        ],
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text('Error');
+                    } else {
+                      return CircularProgressIndicator();
+                    }
+                  },
+                ),
+              ],
             ),
           ],
         ),
