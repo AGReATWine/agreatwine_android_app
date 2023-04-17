@@ -3,8 +3,7 @@ import 'navigation.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'main.dart';
-import 'appellation_docg.dart';
-import 'appellation_second.dart';
+import 'entries_screen.dart';
 import 'appellation_third.dart';
 import 'winery.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -277,7 +276,7 @@ class WineDetailsScreen extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => EntriesScreen(
-                                  appellationName: wineDetails['appellationName'],
+                                  level: wineDetails['appellationName'], levelName: 'DOC'
                                 ),
                               ),
                             );
@@ -303,8 +302,8 @@ class WineDetailsScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => EntriesSecondScreen(
-                                  slc: wineDetails['slc'],
+                                builder: (context) => EntriesScreen(
+                                  level: wineDetails['slc'], levelName: 'SLC'
                                 ),
                               ),
                             );
@@ -330,8 +329,8 @@ class WineDetailsScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => EntriesThirdScreen(
-                                  tlc: wineDetails['tlc'],
+                                builder: (context) => EntriesScreen(
+                                  level: wineDetails['tlc'], levelName: 'TLC'
                                 ),
                               ),
                             );

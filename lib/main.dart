@@ -102,9 +102,10 @@ class _HomeScreen extends State<HomeScreen> {
         title: Text(translations.appTitle),
       ),
       body: Center(
-        child: FlutterLogo(
-          size: 200,
-        ),
+          child: ImageIcon(
+            AssetImage('assets/logo.png'),
+            size: 200,
+          ),
       ),
       bottomNavigationBar: AGreatBottomNavigationBarH(
         currentIndex: _currentIndex,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'search_results.dart';
 import 'details_screen.dart';
 import 'main.dart';
 

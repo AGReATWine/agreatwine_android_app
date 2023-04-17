@@ -1,4 +1,4 @@
-package com.example.flutter_application_sql_4
+package com.agreatwine
 
 import io.flutter.embedding.android.FlutterActivity
 

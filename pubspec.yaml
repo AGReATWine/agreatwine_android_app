@@ -17,6 +17,7 @@ dependencies:
   flutter_icons: ^1.1.0
   scrollable_positioned_list:
   syncfusion_flutter_charts: ^21.1.38
+  lazy_load_scrollview:
 
 dev_dependencies:
   flutter_test:
@@ -29,3 +30,4 @@ flutter:
     - assets/allwines10.db
     - assets/mycellar.db
     - assets/locale/
+    - assets/logo.png
