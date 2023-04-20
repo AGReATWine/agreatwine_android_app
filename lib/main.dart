@@ -12,23 +12,21 @@ import 'cellar_wine_details.dart';
 
 import 'translations.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await copyDatabase();
   runApp(Agreatwine());
 }
 
-
-
 Future<void> copyDatabase() async {
   final dbPath = await getDatabasesPath();
-  final path = join(dbPath, 'allwines10.db');
+  final path = join(dbPath, 'allwines16.db');
 
   final fileExists = await databaseExists(path);
   if (!fileExists) {
-    final data = await rootBundle.load('assets/allwines10.db');
-    final bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+    final data = await rootBundle.load('assets/allwines16.db');
+    final bytes =
+        data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
     await File(path).writeAsBytes(bytes);
   }
 }
@@ -75,9 +73,7 @@ class Agreatwine extends StatelessWidget {
       ],
       title: 'AGReATWine',
       theme: ThemeData(
-        colorScheme: ColorScheme.light(
-          primary: utils.primaryLight
-        ),
+        colorScheme: ColorScheme.light(primary: utils.primaryLight),
         useMaterial3: true,
       ),
       home: HomeScreen(),
@@ -102,11 +98,17 @@ class _HomeScreen extends State<HomeScreen> {
         title: Text(translations.appTitle),
       ),
       body: Center(
-          child: ImageIcon(
-            AssetImage('assets/logo.png'),
-            size: 200,
-          ),
+  child: FractionallySizedBox(
+    widthFactor: 0.5,
+    heightFactor: 0.5,
+    child: Expanded(
+      child: Image(
+        image: AssetImage('assets/logo.png'),
+        fit: BoxFit.contain,
       ),
+    ),
+  ),
+),
       bottomNavigationBar: AGreatBottomNavigationBarH(
         currentIndex: _currentIndex,
       ),
