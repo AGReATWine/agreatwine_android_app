@@ -58,7 +58,7 @@ void initState() {
 
   Future<List<Map<String, dynamic>>> searchEntries() async {
     var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, 'allwines16.db');
+    String path = join(databasesPath, 'allwines.db');
     Database database = await openDatabase(path);
     List<Map<String, dynamic>> results;
     if (widget.levelName == 'SLC') {
@@ -113,11 +113,11 @@ void initState() {
 
   void filterEntries(String query) {
     List<Map<String, dynamic>> filteredEntries = originalEntries.where((entry) {
-      return entry['FullName'] != null &&
+      return entry['FullName'] != "" &&
               entry['FullName'].toLowerCase().contains(query.toLowerCase()) ||
-          entry['WineryName'] != null &&
+          entry['WineryName'] != "" &&
               entry['WineryName'].toLowerCase().contains(query.toLowerCase()) ||
-          entry['Pairings'] != null &&
+          entry['Pairings'] != "" &&
               entry['Pairings'].toLowerCase().contains(query.toLowerCase());
     }).toList();
     setState(() {
@@ -154,6 +154,7 @@ void initState() {
     });
   }
 
+  String _value = 'RS';
   @override
   Widget build(BuildContext context) {
     debugPrint(widget.level.toString());
@@ -168,10 +169,18 @@ void initState() {
             children: [
               Text('Sort by: '),
               DropdownButton<String>(
-                value: 'RS',
+                value: _value,
                 onChanged: (String? field) {
-                  if (field != null) {
-                    sortEntries(field, isAscending);
+                  if (field == 'QP') {
+                    setState(() {
+                      _value = 'QP';
+                    });
+                    sortEntries(field!, isAscending);
+                  } else if (field == 'RS') {
+                    setState(() {
+                      _value = 'RS';
+                    });
+                    sortEntries(field!, isAscending);
                   }
                 },
                 items: [

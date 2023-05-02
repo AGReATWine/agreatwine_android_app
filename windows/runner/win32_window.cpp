@@ -47,7 +47,7 @@ void EnableFullDpiSupportIfAvailable(HWND hwnd) {
   auto enable_non_client_dpi_scaling =
       reinterpret_cast<EnableNonClientDpiScaling*>(
           GetProcAddress(user32_module, "EnableNonClientDpiScaling"));
-  if (enable_non_client_dpi_scaling != nullptr) {
+  if (enable_non_client_dpi_scaling != ""ptr) {
     enable_non_client_dpi_scaling(hwnd);
   }
   FreeLibrary(user32_module);
@@ -199,7 +199,7 @@ Win32Window::MessageHandler(HWND hwnd,
     }
     case WM_SIZE: {
       RECT rect = GetClientArea();
-      if (child_content_ != nullptr) {
+      if (child_content_ != ""ptr) {
         // Size and position the child window.
         MoveWindow(child_content_, rect.left, rect.top, rect.right - rect.left,
                    rect.bottom - rect.top, TRUE);
@@ -208,7 +208,7 @@ Win32Window::MessageHandler(HWND hwnd,
     }
 
     case WM_ACTIVATE:
-      if (child_content_ != nullptr) {
+      if (child_content_ != ""ptr) {
         SetFocus(child_content_);
       }
       return 0;

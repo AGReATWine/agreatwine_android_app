@@ -107,7 +107,7 @@ class SingleWineTile extends StatelessWidget {
                               width: rsBarWidth,
                               height: 20,
                               decoration: BoxDecoration(
-                                  color: Utils.getScoreColor(((rsBarWidth) - rankCalc + 1) / rsBarWidth * 100),
+                                  color: Utils.getScoreColor(((result['RS']) - rankCalc + 1) / result['RS'] * 100),
                                   boxShadow: [
                                   BoxShadow(
                                     color: Colors.grey.shade500,
@@ -169,7 +169,7 @@ class SingleWineTile extends StatelessWidget {
                                 width: qpBarWidth,
                                 height: 20,
                                 decoration: BoxDecoration(
-                                  color: Utils.getScoreColor(((qpBarWidth) - result['QPRANK'] + 1) / qpBarWidth * 100),
+                                  color: Utils.getScoreColor(((result['QP']) - result['QPRANK'] + 1) / result['QP'] * 100),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.grey.shade500,

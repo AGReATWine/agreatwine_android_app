@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -8,7 +6,6 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'navigation.dart';
-import 'cellar_wine_details.dart';
 
 import 'translations.dart';
 
@@ -20,11 +17,11 @@ void main() async {
 
 Future<void> copyDatabase() async {
   final dbPath = await getDatabasesPath();
-  final path = join(dbPath, 'allwines16.db');
+  final path = join(dbPath, 'allwines.db');
 
   final fileExists = await databaseExists(path);
   if (!fileExists) {
-    final data = await rootBundle.load('assets/allwines16.db');
+    final data = await rootBundle.load('assets/allwines.db');
     final bytes =
         data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
     await File(path).writeAsBytes(bytes);
@@ -33,13 +30,13 @@ Future<void> copyDatabase() async {
 
 class Utils {
   Color primaryLight = Colors.red.shade800;
-  Color primaryDark = Color(0xFF689F38);
-  Color euroSymbol = Color(0xFF3E9C35);
+  Color primaryDark = const Color(0xFF689F38);
+  Color euroSymbol = const Color(0xFF3E9C35);
   Color iconsColor = Colors.red.shade200;
-  Color barYellow = Color(0xFFFEBD09);
-  Color barRed = Color(0xFFF44336);
-  Color barBlue = Color(0xFF1976D2);
-  Color barGreen = Color(0xFF4CAF50);
+  Color barYellow = const Color(0xFFFEBD09);
+  Color barRed = const Color(0xFFF44336);
+  Color barBlue = const Color(0xFF1976D2);
+  Color barGreen = const Color(0xFF4CAF50);
 
   static Color getScoreColor(double score) {
     if (score > 90) {
@@ -87,7 +84,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreen extends State<HomeScreen> {
-  int _currentIndex = 0;
+  final int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -97,15 +94,16 @@ class _HomeScreen extends State<HomeScreen> {
       appBar: AppBar(
         title: Text(translations.appTitle),
       ),
-      body: Center(
+      body: const Center(
   child: FractionallySizedBox(
     widthFactor: 0.5,
     heightFactor: 0.5,
     child: Expanded(
-      child: Image(
-        image: AssetImage('assets/logo.png'),
-        fit: BoxFit.contain,
-      ),
+      // child: Image(
+      //   image: AssetImage('assets/logo.png'),
+      //   fit: BoxFit.contain,
+      // ),
+      child: Text("test")
     ),
   ),
 ),

@@ -13,6 +13,8 @@ class WineDetailsScreen extends StatelessWidget {
   final Map<String, dynamic> wineDetails;
 
   late List<double> appellationPricesList = [];
+  late List<double> slcList = [];
+  late List<double> tlcList = [];
 
   late List<Map<String, dynamic>> medianPricesList = [];
 
@@ -20,7 +22,7 @@ class WineDetailsScreen extends StatelessWidget {
 
   Future<List<Map<String, dynamic>>> _getWineDetails(String fullName, String wineryName) async {
       final dbPath = await getDatabasesPath();
-      final path = join(dbPath, 'allwines16.db');
+      final path = join(dbPath, 'allwines.db');
       final database = await openDatabase(path);
 
       final results = await database.rawQuery(
@@ -38,6 +40,25 @@ class WineDetailsScreen extends StatelessWidget {
       //array of prices
       appellationPricesList = appellationEntries.map<double>((entry) => entry['Price'] as double).toList();
 
+      //all slc wines
+      final slcName = results[0]['SLC'];
+      final slcEntries = await database.query(
+        'allwines',
+        where: 'SLC = ? AND Entry = ?',
+        whereArgs: [slcName, 1],
+      );
+      //array of slc ranks
+      slcList = slcEntries.map<double>((entry) => entry['Price'] as double).toList();
+
+      //all tlc wines
+      final tlcName = results[0]['TLC'];
+      final tlcEntries = await database.query(
+        'allwines',
+        where: 'TLC = ? AND Entry = ?',
+        whereArgs: [tlcName, 1],
+      );
+      //array of slc ranks
+      tlcList = tlcEntries.map<double>((entry) => entry['Price'] as double).toList();
 
       //pair RatingYear-Price
       final Map<double, List<double>> pairRatingsPrice = {};
@@ -98,6 +119,9 @@ class WineDetailsScreen extends StatelessWidget {
             final wineMax = price.reduce((value, element) => value > element ? value : element);
             final wineMin = price.reduce((value, element) => value < element ? value : element);
 
+            final slcCount = slcList.length;
+            final tlcCount = tlcList.length;
+
 
             return SingleChildScrollView(
               child: Column(
@@ -120,7 +144,7 @@ class WineDetailsScreen extends StatelessWidget {
                   ),
                   _buildDetailsWidget(context, wineDetails),
                   _buildPairingWidget(wineDetails),
-                  _buildScoreWidget(wineDetails),
+                  _buildScoreWidget(wineDetails, slcCount, tlcCount),
                   _buildVintageWidget(vintages, evaluations, scoreAvg, tasting, context),
                   _buildChartWidget(xMin.toDouble(), xMax.toDouble(), yMin.toDouble(), yMax.toDouble(), wineMin, wineMax, details),
                 ],
@@ -290,7 +314,7 @@ class WineDetailsScreen extends StatelessWidget {
                     )
                   ],
                 ),
-                if (wineDetails['slc'] != null)
+                if (wineDetails['slc'] != "")
                 TableRow(
                   children: [
                     Text('Varieties²'),
@@ -317,7 +341,7 @@ class WineDetailsScreen extends StatelessWidget {
                     )
                   ],
                 ),
-                if (wineDetails['tlc'] != null)
+                if (wineDetails['tlc'] != "")
                 TableRow(
                   children: [
                     Text('Regional³ Comparison'),
@@ -413,7 +437,7 @@ class WineDetailsScreen extends StatelessWidget {
 
   Future<int> _getRank(String appellationName) async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'allwines16.db');
+    final path = join(dbPath, 'allwines.db');
     final database = await openDatabase(path);
 
     final results = await database.rawQuery(
@@ -424,7 +448,7 @@ class WineDetailsScreen extends StatelessWidget {
      return (results.first.values.first as num).toInt();
   }
   /// Builds the score section of the screen
-  Widget _buildScoreWidget(Map<String, dynamic> wineDetails) {
+  Widget _buildScoreWidget(Map<String, dynamic> wineDetails, slcCount, tlcCount) {
   return Column(
     children: [
       Container(
@@ -485,7 +509,7 @@ class WineDetailsScreen extends StatelessWidget {
                 ),
               ],
             ),
-            if (wineDetails['slc'] != null)
+            if (wineDetails['slc'] != "")
             Row(
               children: [
                 FutureBuilder<int>(
@@ -508,7 +532,7 @@ class WineDetailsScreen extends StatelessWidget {
                           ),
                           Text(' '),
                           Text(wineDetails['rank2'].toInt().toString(), style: TextStyle(color: Utils.getScoreColor(((wineDetails['rs2Score'] - wineDetails['rank2'] + 1) / wineDetails['rs2Score'] * 100)), fontWeight: FontWeight.bold, fontSize: 20)),
-                          Text('/' + snapshot.data.toString())
+                          Text('/' + slcCount.toString())
                         ],
                       );
                     } else if (snapshot.hasError) {
@@ -520,7 +544,7 @@ class WineDetailsScreen extends StatelessWidget {
                 ),
               ],
             ),
-            if (wineDetails['tlc'] != null)
+            if (wineDetails['tlc'] != "")
             Row(
               children: [
                 FutureBuilder<int>(
@@ -543,7 +567,7 @@ class WineDetailsScreen extends StatelessWidget {
                           ),
                           Text(' '),
                           Text(wineDetails['rank3'].toInt().toString(), style: TextStyle(color: Utils.getScoreColor(((wineDetails['rs3Score'] - wineDetails['rank3'] + 1) / wineDetails['rs3Score'] * 100)), fontWeight: FontWeight.bold, fontSize: 20)),
-                          Text('/' + snapshot.data.toString())
+                          Text('/' + tlcCount.toString())
                         ],
                       );
                     } else if (snapshot.hasError) {
