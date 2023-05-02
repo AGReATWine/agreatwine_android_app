@@ -22,7 +22,7 @@ class WineDetailsScreen extends StatelessWidget {
 
   Future<List<Map<String, dynamic>>> _getWineDetails(String fullName, String wineryName) async {
       final dbPath = await getDatabasesPath();
-      final path = join(dbPath, 'allwines.db');
+      final path = join(dbPath, 'allwines24.db');
       final database = await openDatabase(path);
 
       final results = await database.rawQuery(
@@ -40,7 +40,7 @@ class WineDetailsScreen extends StatelessWidget {
       //array of prices
       appellationPricesList = appellationEntries.map<double>((entry) => entry['Price'] as double).toList();
 
-      //all slc wines
+      // //all slc wines
       final slcName = results[0]['SLC'];
       final slcEntries = await database.query(
         'allwines',
@@ -48,9 +48,13 @@ class WineDetailsScreen extends StatelessWidget {
         whereArgs: [slcName, 1],
       );
       //array of slc ranks
-      slcList = slcEntries.map<double>((entry) => entry['Price'] as double).toList();
+      if (results[0]['SLC'] != '') {
+        slcList = slcEntries.map<double>((entry) => entry['Price'] as double).toList();
+      } else {
+        slcList;
+      }
 
-      //all tlc wines
+      // //all tlc wines
       final tlcName = results[0]['TLC'];
       final tlcEntries = await database.query(
         'allwines',
@@ -58,7 +62,12 @@ class WineDetailsScreen extends StatelessWidget {
         whereArgs: [tlcName, 1],
       );
       //array of slc ranks
-      tlcList = tlcEntries.map<double>((entry) => entry['Price'] as double).toList();
+      if (results[0]['TLC'] != '') {
+        tlcList = tlcEntries.map<double>((entry) => entry['Price'] as double).toList();
+      } else {
+        tlcList;
+      }
+
 
       //pair RatingYear-Price
       final Map<double, List<double>> pairRatingsPrice = {};
@@ -437,7 +446,7 @@ class WineDetailsScreen extends StatelessWidget {
 
   Future<int> _getRank(String appellationName) async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'allwines.db');
+    final path = join(dbPath, 'allwines24.db');
     final database = await openDatabase(path);
 
     final results = await database.rawQuery(
