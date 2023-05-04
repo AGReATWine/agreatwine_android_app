@@ -261,7 +261,7 @@ void filterEntries(String query) {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: TextFormField(
               controller: _searchController,
-              decoration: InputDecoration(hintText: 'Enter search query'),
+              decoration: InputDecoration(hintText: 'Filter for name, winery or pairing'),
               onChanged: (query) {
                 filterEntries(query);
               },

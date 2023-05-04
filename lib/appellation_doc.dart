@@ -3,30 +3,27 @@ import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-
 import 'navigation.dart';
 import 'entries_screen.dart';
 import 'comparisons_screen.dart';
 
-
-Future<List<Map<String, dynamic>>> searchWines() async {
+Future<List<Map<String, dynamic>>> searchWines(String query) async {
   var databasesPath = await getDatabasesPath();
   String path = join(databasesPath, 'allwines26.db');
-  
+
   Database database = await openDatabase(path);
   List<Map<String, dynamic>> results = await database.rawQuery(
-    "SELECT AppellationName, COUNT(*) as count FROM allwines WHERE AppellationLevel = 'DOC' AND Entry = 1 GROUP BY AppellationName",
-  );
+      "SELECT AppellationName, COUNT(*) as count FROM allwines WHERE AppellationLevel = 'DOC' AND Entry = 1 AND AppellationName LIKE '%$query%' GROUP BY AppellationName");
   await database.close();
   return results;
 }
 
-  int _currentIndex = 1;
-  int _docIndex = 1;
-  int _docgIndex = 0;  
-  int _slevelIndex = 0;
-  int _tlevelIndex = 0;
-  String levelName = 'DOC';
+int _currentIndex = 1;
+int _docIndex = 1;
+int _docgIndex = 0;
+int _slevelIndex = 0;
+int _tlevelIndex = 0;
+String levelName = 'DOC';
 
 class DocScreen extends StatefulWidget {
   @override
@@ -35,19 +32,17 @@ class DocScreen extends StatefulWidget {
 
 class _DocScreenState extends State<DocScreen> {
   List<Map<String, dynamic>> wines = [];
+  TextEditingController _searchController = TextEditingController();
 
-
-
-    @override
+  @override
   void initState() {
     super.initState();
-    searchWines().then((results) {
+    searchWines('').then((results) {
       setState(() {
         wines = results;
       });
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -68,8 +63,8 @@ class _DocScreenState extends State<DocScreen> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => EntriesScreen(
-                          level: wine['AppellationName'], levelName: levelName
-                        ),
+                            level: wine['AppellationName'],
+                            levelName: levelName),
                       ),
                     );
                   },
@@ -86,10 +81,31 @@ class _DocScreenState extends State<DocScreen> {
               },
             ),
           ),
-          ComparisonsScreen( docIndex: _docIndex, docgIndex: _docgIndex, slevelIndex: _slevelIndex, tlevelIndex: _tlevelIndex)
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                labelText: 'Filter by name',
+                border: UnderlineInputBorder(),
+              ),
+              onChanged: (query) {
+                searchWines(query).then((results) {
+                  setState(() {
+                    wines = results;
+                  });
+                });
+              },
+            ),
+          ),
+          ComparisonsScreen(
+              docIndex: _docIndex,
+              docgIndex: _docgIndex,
+              slevelIndex: _slevelIndex,
+              tlevelIndex: _tlevelIndex)
         ],
       ),
-      bottomNavigationBar: AGreatBottomNavigationBarH( currentIndex: _currentIndex),
+      bottomNavigationBar: AGreatBottomNavigationBarH(currentIndex: _currentIndex),
     );
   }
 }

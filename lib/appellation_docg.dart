@@ -7,13 +7,13 @@ import 'entries_screen.dart';
 import 'comparisons_screen.dart';
 
 
-Future<List<Map<String, dynamic>>> searchWines() async {
+Future<List<Map<String, dynamic>>> searchWines(String query) async {
   var databasesPath = await getDatabasesPath();
   String path = join(databasesPath, 'allwines26.db');
   
   Database database = await openDatabase(path);
   List<Map<String, dynamic>> results = await database.rawQuery(
-    "SELECT AppellationName, COUNT(*) as count FROM allwines WHERE AppellationLevel = 'DOCG' AND Entry = 1 GROUP BY AppellationName",
+    "SELECT AppellationName, COUNT(*) as count FROM allwines WHERE AppellationLevel = 'DOCG' AND Entry = 1 AND AppellationName LIKE '%$query%' GROUP BY AppellationName",
   );
   await database.close();
   return results;
@@ -33,11 +33,12 @@ class DocgScreen extends StatefulWidget {
 
 class _DocgScreenState extends State<DocgScreen> {
   List<Map<String, dynamic>> wines = [];
+  TextEditingController _searchController = TextEditingController();
 
-    @override
+  @override
   void initState() {
     super.initState();
-    searchWines().then((results) {
+    searchWines('').then((results) {
       setState(() {
         wines = results;
       });
@@ -78,6 +79,23 @@ class _DocgScreenState extends State<DocgScreen> {
                     ),
                   ),
                 );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                labelText: 'Filter by name',
+                border: UnderlineInputBorder(),
+              ),
+              onChanged: (query) {
+                searchWines(query).then((results) {
+                  setState(() {
+                    wines = results;
+                  });
+                });
               },
             ),
           ),
