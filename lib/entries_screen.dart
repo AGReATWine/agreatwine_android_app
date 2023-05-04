@@ -58,7 +58,7 @@ void initState() {
 
   Future<List<Map<String, dynamic>>> searchEntries() async {
     var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, 'allwines24.db');
+    String path = join(databasesPath, 'allwines26.db');
     Database database = await openDatabase(path);
     List<Map<String, dynamic>> results;
     if (widget.levelName == 'SLC') {
@@ -111,19 +111,16 @@ void initState() {
     }
   }
 
-  void filterEntries(String query) {
-    List<Map<String, dynamic>> filteredEntries = originalEntries.where((entry) {
-      return entry['FullName'] != "" &&
-              entry['FullName'].toLowerCase().contains(query.toLowerCase()) ||
-          entry['WineryName'] != "" &&
-              entry['WineryName'].toLowerCase().contains(query.toLowerCase()) ||
-          entry['Pairings'] != "" &&
-              entry['Pairings'].toLowerCase().contains(query.toLowerCase());
-    }).toList();
-    setState(() {
-      entries = filteredEntries;
-    });
-  }
+void filterEntries(String query) {
+  List<Map<String, dynamic>> filteredEntries = originalEntries.where((entry) {
+    return (entry['FullName'] != null && entry['FullName'].isNotEmpty && entry['FullName'].toLowerCase().contains(query.toLowerCase())) ||
+           (entry['WineryName'] != null && entry['WineryName'].isNotEmpty && entry['WineryName'].toLowerCase().contains(query.toLowerCase())) ||
+           (entry['Pairings'] != null && entry['Pairings'].isNotEmpty && entry['Pairings'].toLowerCase().contains(query.toLowerCase()));
+  }).toList();
+  setState(() {
+    entries = filteredEntries;
+  });
+}
 
   void sortEntries(String field, bool isAscending) {
     List<Map<String, dynamic>> sortedEntries = List.from(entries);

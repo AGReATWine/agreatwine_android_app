@@ -22,7 +22,7 @@ class WineDetailsScreen extends StatelessWidget {
 
   Future<List<Map<String, dynamic>>> _getWineDetails(String fullName, String wineryName) async {
       final dbPath = await getDatabasesPath();
-      final path = join(dbPath, 'allwines24.db');
+      final path = join(dbPath, 'allwines26.db');
       final database = await openDatabase(path);
 
       final results = await database.rawQuery(
@@ -225,7 +225,7 @@ class WineDetailsScreen extends StatelessWidget {
               dataSource: details,
               xValueMapper: (data, _) => data['RatingYear'],
               yValueMapper: (data, _) => data['Price'],
-              name: wineDetails['fullName'],
+              name: legendLabel,
               dataLabelSettings: DataLabelSettings(isVisible: true),
               markerSettings: MarkerSettings(
                 isVisible: true
@@ -446,7 +446,7 @@ class WineDetailsScreen extends StatelessWidget {
 
   Future<int> _getRank(String appellationName) async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'allwines24.db');
+    final path = join(dbPath, 'allwines26.db');
     final database = await openDatabase(path);
 
     final results = await database.rawQuery(
@@ -663,10 +663,7 @@ class WineDetailsScreen extends StatelessWidget {
                   offset: Offset(1, 0.5), // changes position of shadow
                 ),
               ],
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(5),
-                bottomLeft: Radius.circular(5),
-              ),
+              borderRadius: BorderRadius.circular(5)
             ),
           ),
         ),
