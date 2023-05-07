@@ -9,7 +9,7 @@ import 'comparisons_screen.dart';
 
 Future<List<Map<String, dynamic>>> searchWines(String query) async {
   var databasesPath = await getDatabasesPath();
-  String path = join(databasesPath, 'allwines28.db');
+  String path = join(databasesPath, 'allwines29.db');
   
   Database database = await openDatabase(path);
   List<Map<String, dynamic>> results = await database.rawQuery(
