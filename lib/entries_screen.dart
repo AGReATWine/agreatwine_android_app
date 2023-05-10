@@ -58,7 +58,7 @@ void initState() {
 
   Future<List<Map<String, dynamic>>> searchEntries() async {
     var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, 'allwines31.db');
+    String path = join(databasesPath, 'allwines32.db');
     Database database = await openDatabase(path);
     List<Map<String, dynamic>> results;
     if (widget.levelName == 'SLC') {
