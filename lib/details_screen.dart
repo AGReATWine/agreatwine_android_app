@@ -725,7 +725,7 @@ class WineDetailsScreen extends StatelessWidget {
                           Row(
                             children: [
                               Icon(Icons.rule, color: utils.iconsColor, shadows: <Shadow>[Shadow(color: Colors.grey, blurRadius: 1.0, offset: Offset(.5, .5))]),
-                              Text(scoreAvg[i]),
+                              Text(scoreAvg[i].replaceAll('.00', '')),
                             ],
                           ),
                           IconButton(
@@ -735,7 +735,7 @@ class WineDetailsScreen extends StatelessWidget {
                                 builder: (BuildContext context) {
                                   return Container(
                                     padding: EdgeInsets.all(16.0), // add padding
-                                    child: tasting[i] == null
+                                    child: tasting[i] == ''
                                       ? Text(
                                             "No tasting notes for this vintage", 
                                             softWrap: true, 
@@ -751,7 +751,13 @@ class WineDetailsScreen extends StatelessWidget {
                                 },
                               );
                             },
-                            icon: Icon(Icons.notes, color: utils.iconsColor,  shadows: <Shadow>[Shadow(color: Colors.grey, blurRadius: 1.0, offset: Offset(.5, .5))]),
+                            icon: Icon(
+                              Icons.notes, 
+                              color: tasting[i] == '' ? Colors.grey : utils.iconsColor, 
+                              shadows: <Shadow>[
+                                Shadow(color: Colors.grey, blurRadius: 1.0, offset: Offset(.5, .5))
+                              ]
+                            ),
                             tooltip: 'Show Tasting Notes',
                           ),
                         ],
