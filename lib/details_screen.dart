@@ -22,7 +22,7 @@ class WineDetailsScreen extends StatelessWidget {
 
   Future<List<Map<String, dynamic>>> _getWineDetails(String fullName, String wineryName) async {
       final dbPath = await getDatabasesPath();
-      final path = join(dbPath, 'allwines34.db');
+      final path = join(dbPath, 'allwines35.db');
       final database = await openDatabase(path);
 
       final results = await database.rawQuery(
@@ -446,7 +446,7 @@ class WineDetailsScreen extends StatelessWidget {
 
   Future<int> _getRank(String appellationName) async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'allwines34.db');
+    final path = join(dbPath, 'allwines35.db');
     final database = await openDatabase(path);
 
     final results = await database.rawQuery(
