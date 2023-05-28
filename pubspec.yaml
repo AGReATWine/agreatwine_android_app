@@ -14,7 +14,7 @@ dependencies:
   sqflite: ^2.0.0+3
   path: ^1.8.0
   path_provider:
-  flutter_icons: ^1.1.0
+  font_awesome_flutter: ^10.0.0
   scrollable_positioned_list:
   syncfusion_flutter_charts: ^21.1.38
   lazy_load_scrollview:
