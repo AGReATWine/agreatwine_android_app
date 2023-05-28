@@ -27,7 +27,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/allwines37.db
+    - assets/allwines40.db
     - assets/mycellar.db
     - assets/locale/
     - assets/logo.png
