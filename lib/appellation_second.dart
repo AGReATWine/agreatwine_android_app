@@ -19,7 +19,7 @@ String levelName = 'SLC';
 
 Future<List<Map<String, dynamic>>> searchWines() async {
   var databasesPath = await getDatabasesPath();
-  String path = join(databasesPath, 'allwines40.db');
+  String path = join(databasesPath, 'allwines41.db');
 
   Database database = await openDatabase(path);
   List<Map<String, dynamic>> results = await database.rawQuery(
