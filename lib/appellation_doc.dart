@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -9,7 +8,7 @@ import 'comparisons_screen.dart';
 
 Future<List<Map<String, dynamic>>> searchWines(String query) async {
   var databasesPath = await getDatabasesPath();
-  String path = join(databasesPath, 'allwines41.db');
+  String path = join(databasesPath, 'allwines43.db');
 
   Database database = await openDatabase(path);
   List<Map<String, dynamic>> results = await database.rawQuery(
@@ -105,7 +104,8 @@ class _DocScreenState extends State<DocScreen> {
               tlevelIndex: _tlevelIndex)
         ],
       ),
-      bottomNavigationBar: AGreatBottomNavigationBarH(currentIndex: _currentIndex),
+      bottomNavigationBar:
+          AGreatBottomNavigationBarH(currentIndex: _currentIndex),
     );
   }
 }

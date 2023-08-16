@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:intl/intl.dart';
-import 'dart:io';
 import 'search_results.dart';
-import 'main.dart';
 import 'translations.dart';
 import 'navigation.dart';
 import 'search_sort_buttons.dart';
-import 'search_results.dart';
 
 class SearchScreen extends StatefulWidget {
   final TextEditingController? controller;
@@ -24,7 +18,6 @@ class SearchScreen extends StatefulWidget {
   @override
   _SearchScreenState createState() => _SearchScreenState();
 }
-
 
 class _SearchScreenState extends State<SearchScreen> {
   TextEditingController _searchController = TextEditingController();
@@ -44,7 +37,8 @@ class _SearchScreenState extends State<SearchScreen> {
       _searchController.text = widget.controller!.text;
     }
     debugPrint(widget.isComingFromCellarWineDetails.toString());
-    if (widget.isComingFromCellarWineDetails) { // Check if coming from CellarWineDetails
+    if (widget.isComingFromCellarWineDetails) {
+      // Check if coming from CellarWineDetails
       // Programmatically call search button's onPressed callback
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final Function()? onPressed = IconButton(
@@ -133,9 +127,10 @@ class _SearchScreenState extends State<SearchScreen> {
           _sortByRS = sortByRS;
           _sortByQP = sortByQP;
           _sortAscending = sortAscending;
-           _searchResults = List.from(_searchResults)..sort((a, b) => sortByRS
-              ? (b['RS'] ?? 0).compareTo(a['RS'] ?? 0)
-              : (a['RS'] ?? 0).compareTo(b['RS'] ?? 0));
+          _searchResults = List.from(_searchResults)
+            ..sort((a, b) => sortByRS
+                ? (b['RS'] ?? 0).compareTo(a['RS'] ?? 0)
+                : (a['RS'] ?? 0).compareTo(b['RS'] ?? 0));
         });
       },
       onPressedQP: (sortByRS, sortByQP, sortAscending) {
@@ -143,9 +138,10 @@ class _SearchScreenState extends State<SearchScreen> {
           _sortByRS = sortByRS;
           _sortByQP = sortByQP;
           _sortAscending = sortAscending;
-          _searchResults = List.from(_searchResults)..sort((a, b) => sortByQP
-              ? (b['QP'] ?? 0).compareTo(a['QP'] ?? 0)
-              : (a['QP'] ?? 0).compareTo(b['QP'] ?? 0));
+          _searchResults = List.from(_searchResults)
+            ..sort((a, b) => sortByQP
+                ? (b['QP'] ?? 0).compareTo(a['QP'] ?? 0)
+                : (a['QP'] ?? 0).compareTo(b['QP'] ?? 0));
         });
       },
     );
@@ -153,7 +149,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Future<List<Map<String, dynamic>>> _search(String query) async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'allwines41.db');
+    final path = join(dbPath, 'allwines43.db');
     final database = await openDatabase(path);
 
     final results = await database.rawQuery(

@@ -6,8 +6,6 @@ import 'package:sqflite/sqflite.dart';
 import 'main.dart';
 import 'navigation.dart';
 import 'single_wine_tile.dart';
-import 'comparisons_screen.dart';
-import 'appellation_second.dart';
 
 int _currentIndex = 1;
 bool isSecondLevel = false;
@@ -34,31 +32,31 @@ class _EntriesScreenState extends State<EntriesScreen> {
   String selectedWineType = '';
 
   final unselectedButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: Colors.red.shade50, 
-    foregroundColor: utils.primaryLight, 
+    backgroundColor: Colors.red.shade50,
+    foregroundColor: utils.primaryLight,
   );
 
   final selectedButtonStyle = ElevatedButton.styleFrom(
-    foregroundColor: Colors.red.shade50, 
-    backgroundColor: utils.primaryLight, 
+    foregroundColor: Colors.red.shade50,
+    backgroundColor: utils.primaryLight,
   );
 
-@override
-void initState() {
-  super.initState();
-  searchEntries().then((results) {
-    setState(() {
-      entries = results;
-      originalEntries =
-          List.from(results); // Store a copy of the unfiltered entries
-      isSelected = true; // Set isSelected to true by default
+  @override
+  void initState() {
+    super.initState();
+    searchEntries().then((results) {
+      setState(() {
+        entries = results;
+        originalEntries =
+            List.from(results); // Store a copy of the unfiltered entries
+        isSelected = true; // Set isSelected to true by default
+      });
     });
-  });
-}
+  }
 
   Future<List<Map<String, dynamic>>> searchEntries() async {
     var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, 'allwines41.db');
+    String path = join(databasesPath, 'allwines43.db');
     Database database = await openDatabase(path);
     List<Map<String, dynamic>> results;
     if (widget.levelName == 'SLC') {
@@ -111,16 +109,24 @@ void initState() {
     }
   }
 
-void filterEntries(String query) {
-  List<Map<String, dynamic>> filteredEntries = originalEntries.where((entry) {
-    return (entry['FullName'] != null && entry['FullName'].isNotEmpty && entry['FullName'].toLowerCase().contains(query.toLowerCase())) ||
-           (entry['WineryName'] != null && entry['WineryName'].isNotEmpty && entry['WineryName'].toLowerCase().contains(query.toLowerCase())) ||
-           (entry['Pairings'] != null && entry['Pairings'].isNotEmpty && entry['Pairings'].toLowerCase().contains(query.toLowerCase()));
-  }).toList();
-  setState(() {
-    entries = filteredEntries;
-  });
-}
+  void filterEntries(String query) {
+    List<Map<String, dynamic>> filteredEntries = originalEntries.where((entry) {
+      return (entry['FullName'] != null &&
+              entry['FullName'].isNotEmpty &&
+              entry['FullName'].toLowerCase().contains(query.toLowerCase())) ||
+          (entry['WineryName'] != null &&
+              entry['WineryName'].isNotEmpty &&
+              entry['WineryName']
+                  .toLowerCase()
+                  .contains(query.toLowerCase())) ||
+          (entry['Pairings'] != null &&
+              entry['Pairings'].isNotEmpty &&
+              entry['Pairings'].toLowerCase().contains(query.toLowerCase()));
+    }).toList();
+    setState(() {
+      entries = filteredEntries;
+    });
+  }
 
   void sortEntries(String field, bool isAscending) {
     List<Map<String, dynamic>> sortedEntries = List.from(entries);
@@ -216,52 +222,55 @@ void filterEntries(String query) {
             ),
           ),
           if (wineTypes.length > 1)
-  Container(
-    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
-    child: SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                entries = List.from(originalEntries);
-                isSelected = true;
-                selectedWineType = ''; // reset isSelected and selectedWineType when All is pressed
-              });
-            },
-            style: isSelected && selectedWineType == ''
-                ? selectedButtonStyle
-                : unselectedButtonStyle, // update style based on isSelected and selectedWineType
-            child: Text("All"),
-          ),
-          ...wineTypes.map((wineType) {
-            return Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  filterEntriesByWineType(wineType);
-                  setState(() {
-                    isSelected = true;
-                    selectedWineType = wineType; // update isSelected and selectedWineType when this button is clicked
-                  });
-                },
-                style: isSelected && selectedWineType == wineType
-                    ? selectedButtonStyle
-                    : unselectedButtonStyle, // update style based on isSelected and selectedWineType
-                child: Text(wineType),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          entries = List.from(originalEntries);
+                          isSelected = true;
+                          selectedWineType =
+                              ''; // reset isSelected and selectedWineType when All is pressed
+                        });
+                      },
+                      style: isSelected && selectedWineType == ''
+                          ? selectedButtonStyle
+                          : unselectedButtonStyle, // update style based on isSelected and selectedWineType
+                      child: Text("All"),
+                    ),
+                    ...wineTypes.map((wineType) {
+                      return Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            filterEntriesByWineType(wineType);
+                            setState(() {
+                              isSelected = true;
+                              selectedWineType =
+                                  wineType; // update isSelected and selectedWineType when this button is clicked
+                            });
+                          },
+                          style: isSelected && selectedWineType == wineType
+                              ? selectedButtonStyle
+                              : unselectedButtonStyle, // update style based on isSelected and selectedWineType
+                          child: Text(wineType),
+                        ),
+                      );
+                    }).toList(),
+                  ],
+                ),
               ),
-            );
-          }).toList(),
-        ],
-      ),
-    ),
-  ),
+            ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: TextFormField(
               controller: _searchController,
-              decoration: InputDecoration(hintText: 'Filter for name, winery or pairing'),
+              decoration: InputDecoration(
+                  hintText: 'Filter for name, winery or pairing'),
               onChanged: (query) {
                 filterEntries(query);
               },

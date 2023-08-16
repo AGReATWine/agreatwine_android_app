@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'details_screen.dart';
 import 'single_wine_tile.dart';
-import 'search_screen.dart';
+
 
 class SearchResults extends StatefulWidget {
   final List<Map<String, dynamic>> searchResults;
@@ -42,7 +41,5 @@ class _SearchResultsState extends State<SearchResults> {
         },
       );
     }
-
-    return Container(); // added a default return statement
   }
 }

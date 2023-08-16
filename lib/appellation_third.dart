@@ -1,20 +1,17 @@
-	import 'package:flutter/material.dart';	
-import 'package:path/path.dart';	
-import 'package:sqflite/sqflite.dart';	
-import 'main.dart';	
-import 'navigation.dart';	
-import 'single_wine_tile.dart';	
-import 'comparisons_screen.dart';	
+import 'package:flutter/material.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
+import 'navigation.dart';
+import 'comparisons_screen.dart';
 import 'entries_screen.dart';
-
 
 Future<List<Map<String, dynamic>>> searchWines() async {
   var databasesPath = await getDatabasesPath();
-  String path = join(databasesPath, 'allwines41.db');
-  
+  String path = join(databasesPath, 'allwines43.db');
+
   Database database = await openDatabase(path);
   List<Map<String, dynamic>> results = await database.rawQuery(
-    "SELECT TLC, COUNT(*) as count FROM allwines WHERE TLC IS NOT NULL AND Entry = 1 GROUP BY tlc",
+    "SELECT TLC, COUNT(*) as count FROM allwines WHERE TLC IS NOT NULL AND SLC != '' AND Entry = 1 GROUP BY tlc",
   );
   await database.close();
   return results;
@@ -22,7 +19,7 @@ Future<List<Map<String, dynamic>>> searchWines() async {
 
 int _currentIndex = 1;
 int _docIndex = 0;
-int _docgIndex = 0;  
+int _docgIndex = 0;
 int _slevelIndex = 0;
 int _tlevelIndex = 1;
 String levelName = 'TLC';
@@ -35,7 +32,7 @@ class TlevelScreen extends StatefulWidget {
 class _TlevelScreenState extends State<TlevelScreen> {
   List<Map<String, dynamic>> wines = [];
 
-    @override
+  @override
   void initState() {
     super.initState();
     searchWines().then((results) {
@@ -44,7 +41,6 @@ class _TlevelScreenState extends State<TlevelScreen> {
       });
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -65,8 +61,7 @@ class _TlevelScreenState extends State<TlevelScreen> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => EntriesScreen(
-                          level: wine['TLC'], levelName: levelName
-                        ),
+                            level: wine['TLC'], levelName: levelName),
                       ),
                     );
                   },
@@ -83,10 +78,15 @@ class _TlevelScreenState extends State<TlevelScreen> {
               },
             ),
           ),
-          ComparisonsScreen(docIndex: _docIndex, docgIndex: _docgIndex, slevelIndex: _slevelIndex, tlevelIndex: _tlevelIndex)
+          ComparisonsScreen(
+              docIndex: _docIndex,
+              docgIndex: _docgIndex,
+              slevelIndex: _slevelIndex,
+              tlevelIndex: _tlevelIndex)
         ],
       ),
-      bottomNavigationBar: AGreatBottomNavigationBarH( currentIndex: _currentIndex),
+      bottomNavigationBar:
+          AGreatBottomNavigationBarH(currentIndex: _currentIndex),
     );
   }
 }

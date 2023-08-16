@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-
-import 'main.dart';
 import 'navigation.dart';
-import 'single_wine_tile.dart';
 import 'comparisons_screen.dart';
 import 'entries_screen.dart';
 
@@ -19,11 +16,11 @@ String levelName = 'SLC';
 
 Future<List<Map<String, dynamic>>> searchWines() async {
   var databasesPath = await getDatabasesPath();
-  String path = join(databasesPath, 'allwines41.db');
+  String path = join(databasesPath, 'allwines43.db');
 
   Database database = await openDatabase(path);
   List<Map<String, dynamic>> results = await database.rawQuery(
-    "SELECT SLC, COUNT(*) as count FROM allwines WHERE SLC IS NOT NULL AND Entry = 1 GROUP BY slc",
+    "SELECT SLC, COUNT(*) as count FROM allwines WHERE SLC IS NOT NULL AND SLC != '' AND Entry = 1 GROUP BY slc",
   );
   await database.close();
   return results;
@@ -65,7 +62,9 @@ class _SlevelScreenState extends State<SlevelScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => EntriesScreen(level: wine['SLC'], levelName: levelName,
+                        builder: (context) => EntriesScreen(
+                          level: wine['SLC'],
+                          levelName: levelName,
                         ),
                       ),
                     );
@@ -95,4 +94,3 @@ class _SlevelScreenState extends State<SlevelScreen> {
     );
   }
 }
-

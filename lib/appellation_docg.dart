@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'navigation.dart';
 import 'entries_screen.dart';
 import 'comparisons_screen.dart';
 
-
 Future<List<Map<String, dynamic>>> searchWines(String query) async {
   var databasesPath = await getDatabasesPath();
-  String path = join(databasesPath, 'allwines41.db');
-  
+  String path = join(databasesPath, 'allwines43.db');
+
   Database database = await openDatabase(path);
   List<Map<String, dynamic>> results = await database.rawQuery(
     "SELECT AppellationName, COUNT(*) as count FROM allwines WHERE AppellationLevel = 'DOCG' AND Entry = 1 AND AppellationName LIKE '%$query%' GROUP BY AppellationName",
@@ -20,11 +18,11 @@ Future<List<Map<String, dynamic>>> searchWines(String query) async {
 }
 
 int _currentIndex = 1;
-  int _docIndex = 0;
-  int _docgIndex = 1;  
-  int _slevelIndex = 0;
-  int _tlevelIndex = 0;
-  String levelName = 'DOC';
+int _docIndex = 0;
+int _docgIndex = 1;
+int _slevelIndex = 0;
+int _tlevelIndex = 0;
+String levelName = 'DOC';
 
 class DocgScreen extends StatefulWidget {
   @override
@@ -64,8 +62,8 @@ class _DocgScreenState extends State<DocgScreen> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => EntriesScreen(
-                          level: wine['AppellationName'], levelName: levelName
-                        ),
+                            level: wine['AppellationName'],
+                            levelName: levelName),
                       ),
                     );
                   },
@@ -99,10 +97,15 @@ class _DocgScreenState extends State<DocgScreen> {
               },
             ),
           ),
-          ComparisonsScreen(docIndex: _docIndex, docgIndex: _docgIndex, slevelIndex: _slevelIndex, tlevelIndex: _tlevelIndex)
+          ComparisonsScreen(
+              docIndex: _docIndex,
+              docgIndex: _docgIndex,
+              slevelIndex: _slevelIndex,
+              tlevelIndex: _tlevelIndex)
         ],
       ),
-      bottomNavigationBar: AGreatBottomNavigationBarH( currentIndex: _currentIndex),
+      bottomNavigationBar:
+          AGreatBottomNavigationBarH(currentIndex: _currentIndex),
     );
   }
 }
