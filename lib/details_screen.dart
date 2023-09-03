@@ -18,6 +18,20 @@ class WineDetailsScreen extends StatelessWidget {
 
   WineDetailsScreen(this.wineDetails);
 
+  double parseToDouble(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is double) return value;
+    if (value is String) {
+      try {
+        return double.parse(value);
+      } catch (e) {
+        print('Failed to parse: $value');
+        return 0.0; // default value
+      }
+    }
+    return 0.0; // default value for any other unexpected type
+  }
+
   Future<List<Map<String, dynamic>>> _getWineDetails(
       String fullName, String wineryName) async {
     final dbPath = await getDatabasesPath();
@@ -38,8 +52,8 @@ class WineDetailsScreen extends StatelessWidget {
     );
     //array of prices
     appellationPricesList = appellationEntries
-        .map<double>((entry) => entry['Price'] as double)
-        .toList();
+      .map<double>((entry) => parseToDouble(entry['Price']))
+      .toList();
 
     // //all slc wines
     final slcName = results[0]['SLC'];
@@ -75,7 +89,8 @@ class WineDetailsScreen extends StatelessWidget {
     final Map<double, List<double>> pairRatingsPrice = {};
 
     for (final entry in appellationEntries) {
-      final ratingYear = entry['RatingYear'] as double;
+      final ratingYear = parseToDouble(entry['RatingYear']);
+
       final price = entry['Price'] as double;
       pairRatingsPrice.putIfAbsent(ratingYear, () => []).add(price);
     }

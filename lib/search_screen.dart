@@ -59,7 +59,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('AAA' + _searchController.toString());
+    debugPrint('AAA' + _searchController.text);
     // TextEditingController _searchController = controller;
     var translations = Translations.of(context);
     return Scaffold(
@@ -117,6 +117,21 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
+  double parseValue(dynamic value) {
+    if (value == null || value == '') return 0.0;
+    if (value is String) {
+      try {
+        return double.parse(value);
+      } catch (e) {
+        print('Failed to parse: $value');
+        return 0.0; // default value
+      }
+    }
+    if (value is double) return value;
+    return 0.0; // default value for any other unexpected type
+  }
+
+
   Widget _buildSortButtons() {
     return SortButtons(
       sortByRS: _sortByRS,
@@ -128,9 +143,14 @@ class _SearchScreenState extends State<SearchScreen> {
           _sortByQP = sortByQP;
           _sortAscending = sortAscending;
           _searchResults = List.from(_searchResults)
-            ..sort((a, b) => sortByRS
-                ? (b['RS'] ?? 0).compareTo(a['RS'] ?? 0)
-                : (a['RS'] ?? 0).compareTo(b['RS'] ?? 0));
+            ..sort((a, b) {
+              double valueA = parseValue(a['RS']);
+              double valueB = parseValue(b['RS']);
+
+              return _sortByRS
+                ? valueB.compareTo(valueA)
+                : valueA.compareTo(valueB);
+            });
         });
       },
       onPressedQP: (sortByRS, sortByQP, sortAscending) {
@@ -139,22 +159,54 @@ class _SearchScreenState extends State<SearchScreen> {
           _sortByQP = sortByQP;
           _sortAscending = sortAscending;
           _searchResults = List.from(_searchResults)
-            ..sort((a, b) => sortByQP
-                ? (b['QP'] ?? 0).compareTo(a['QP'] ?? 0)
-                : (a['QP'] ?? 0).compareTo(b['QP'] ?? 0));
+          ..sort((a, b) {
+            double valueA = parseValue(a['QP']);
+            double valueB = parseValue(b['QP']);
+
+            return sortByQP
+              ? valueB.compareTo(valueA)
+              : valueA.compareTo(valueB);
+          });
         });
       },
     );
   }
+
 
   Future<List<Map<String, dynamic>>> _search(String query) async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, 'allwines43.db');
     final database = await openDatabase(path);
 
-    final results = await database.rawQuery(
-        'SELECT * FROM allwines WHERE FullName LIKE ? OR WineryName LIKE ? OR Pairing LIKE ?',
-        ['%$query%', '%$query%', '%$query%']);
+    // Split the query based on the "&" character
+    List<String> lists = query.split('&&').map((s) => s.trim()).toList();
+
+    List<String> conditions = [];
+    List<String> arguments = [];
+
+    if (lists.length == 1) {
+      // No "&" character, treat entire query as a single list of words
+      List<String> wordsList = lists[0].split(' ').map((s) => s.trim()).toList();
+      for (String word in wordsList) {
+        conditions.add('FullName LIKE ? OR WineryName LIKE ? OR Pairing LIKE ?');
+        arguments.addAll(['%$word%', '%$word%', '%$word%']);
+      }
+    } else if (lists.length == 2) {
+      // Split each list into individual words
+      List<String> wordsList1 = lists[0].split(' ').map((s) => s.trim()).toList();
+      List<String> wordsList2 = lists[1].split(' ').map((s) => s.trim()).toList();
+
+      for (String word1 in wordsList1) {
+        for (String word2 in wordsList2) {
+          conditions.add('(FullName LIKE ? OR WineryName LIKE ? OR Pairing LIKE ?) AND (FullName LIKE ? OR WineryName LIKE ? OR Pairing LIKE ?)');
+          arguments.addAll(['%$word1%', '%$word1%', '%$word1%', '%$word2%', '%$word2%', '%$word2%']);
+        }
+      }
+    }
+
+    String sql = 'SELECT * FROM allwines WHERE ' + conditions.join(' OR ');
+
+    final results = await database.rawQuery(sql, arguments);
 
     return results;
   }
